@@ -3,19 +3,44 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \author{Felix Fritz}
 \title{The Bondareva-Shapley Theorem}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section] % reset theorem numbering for each chapter
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition} % definition numbers are dependent on theorem numbers
+\newtheorem{exmp}[thm]{Example} % same for example numbers
+
 \begin{document}
 \maketitle
 
 \tableofcontents
 \pagebreak
 
-\section{First section}
- 
+\section{Introduction}
+ Before diving into the concept of balanced collections, balanced games and the Bondareva-Shapley Theorem, I want to establish a basic understanding of cooperative games, imputations and the core, mainly as it is described in Robert P. Gilles book \cite{gilles}, pp. 12--13, 18--20 and 29--35.
 
+ \subsection{Cooperative Games and the Core}
+ First we introduce a formal definition of the core.
+\begin{defn}
+    The pair $(N, v)$ is a \textit{cooperative game} if $N$ is a finite player set and $v: 2^N \rightarrow \mathbb{R}$ is a characteristic function that assigns to every coalition $S \subset N$ an attainable payoff $v(S)$ such that $v(\emptyset) = 0$.
+\end{defn}
+
+
+
+ \section{Balanced Games and the Bondareva-Shapley Theorem}
+ In the following chapter we will discuss the properties of cooperative games with a non-empty core and introduce the notion of balancedness, which leads us to the Bondareva-Shapley Theorem.
+
+ \section{Market Games with nonempty cores}
+ Market games can be proven to have a non-empty core using the Bondareva-Shapley Theorem. We will take a closer look on how this can be achieved in the third chapter.
+
+ \section{Proving the Theorem using Linear Programming}
+ Finally, we will show that the Bondareva-Theorem holds true with a prove using the Duality Problem in Linear Programming.
  
-\medskip
+\pagebreak
  
 \bibliographystyle{unsrt}
 \bibliography{references}
