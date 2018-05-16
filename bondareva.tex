@@ -24,10 +24,15 @@
  Before diving into the concept of balanced collections, balanced games and the Bondareva-Shapley Theorem, I want to establish a basic understanding of cooperative games, imputations and the core, mainly as it is described in Robert P. Gilles book \cite{gilles}, pp. 12--13, 18--20 and 29--35.
 
  \subsection{Cooperative Games and the Core}
- First we introduce a formal definition of the core.
+ First we introduce a formal definition of a cooperative game.
 \begin{defn}
     The pair $(N, v)$ is a \textit{cooperative game} if $N$ is a finite player set and $v: 2^N \rightarrow \mathbb{R}$ is a characteristic function that assigns to every coalition $S \subset N$ an attainable payoff $v(S)$ such that $v(\emptyset) = 0$.
+    
+    For every player set $N$ we denote by $\mathcal{G}^N$ the class of all characteristic functions on $N$.
 \end{defn}
+Simply put, in a cooperative game we define collective payoff values for every possible coalition between players. A coalition without any players leads to a payoff of zero.
+
+Suppose for a given cooperative game we form a grand coalition, meaning all player work together for a total payoff of $v(N)$. 
 
 
 
