@@ -9,6 +9,8 @@
 \usepackage{pgfplots}
 %\usepackage{parskip}
 
+\usetikzlibrary{patterns}
+
 \author{Felix Fritz}
 \title{The Bondareva-Shapley Theorem}
 
@@ -76,7 +78,7 @@ If we take each possible coalition $S \subseteq N$ into account and verify that 
  From our definition of a core in \ref{def:core} it is easy to provide some examples of cooperative games that don't contain a core.
 
  \begin{exmp}
-    Suppose we have game with $N = 2$ and a payoff of $v(1) = 2, v(2) = 2, v(1, 2) = 3$.
+    Suppose we have game with $N = 2$ with the following payoffs: $v(\emptyset) = 0, v(1) = v(2) = 2, v(1, 2) = 3$.
 
     Determining if a core exists in such a situation may be trivial to solve, but with only two players this gives us the opportunity to plot a graph and visualize the solution concept.
     
@@ -85,27 +87,47 @@ If we take each possible coalition $S \subseteq N$ into account and verify that 
     For a vector $x \in \mathbb{R}^2$ to be an imputation, it has to be efficient and individually rational.
 
     \begin{tikzpicture}
-        \begin{axis}[
+        \begin{axis}[no marks,
             axis lines = left,
             xlabel = {Player 1},
             ylabel = {Player 2},
             xmin = 0, xmax = 3.5,
             ymin = 0, ymax = 3.5,
-            xtick={1,2,3}
+            xtick={1,2,3},
         ]
-            %efficient payoff function
-            \addplot [color=red]{-x+3};
-            \addlegendentry{Efficient payoff function}
+            
 
             %what player 1 wants
-            \addplot [color=blue]{2};
-            \addplot [samples=2, blue] coordinates {(2,0)(2,3.5)};
-
+            \filldraw [draw=none,pattern=north east lines] (0, 0) rectangle (400, 400);
+            \addplot [blue, thick]{2};
+            % \addplot [blue, thick] coordinates {(2,0)(2,3.5)};
             
-         
+
+            % %efficient payoff function
+            % \addplot [color=red, thick]{-x+3};
         \end{axis}
     \end{tikzpicture}
  \end{exmp}
+
+ \begin{tikzpicture}
+    \begin{semilogxaxis}
+      [
+          enlarge x limits=false,
+          no marks,
+          grid=none,
+          xmin=1e4, xmax=22260785,
+          ymin=0, ymax=120,
+          ylabel={$\sigma_{a}$},
+          xlabel={$N$},
+          samples=400 
+       ]
+         \begin{scope}[green] 
+           \draw[orange,dashed] ({axis cs:50045,0}|-{rel axis cs:0,1}) -- ({axis cs:50045,0}|-{rel axis cs:0,0});
+           \draw[dashed,green] ({rel axis cs:1,0}|-{axis cs:0,18.385735235}) -- ({rel axis cs:0,0}|-{axis cs:0,18.385735235});
+           \filldraw [draw=red,pattern=north east lines] (rel axis cs:0,0) rectangle (axis cs:50045,18.385735235);
+         \end{scope}
+    \end{semilogxaxis}
+  \end{tikzpicture}
  
 
  \subsection{Balanced Games}
