@@ -18,8 +18,8 @@
 \newtheorem{thm}{Theorem}[section] % reset theorem numbering for each chapter
 
 \theoremstyle{definition}
-\newtheorem{defn}[thm]{Definition} % definition numbers are dependent on theorem numbers
-\newtheorem{exmp}[thm]{Example} % same for example numbers
+\newtheorem{definition}[thm]{Definition} % definition numbers are dependent on theorem numbers
+\newtheorem{example}[thm]{Example} % same for example numbers
 
 \begin{document}
 \maketitle
@@ -32,17 +32,17 @@
 
  First we introduce a formal definition of a cooperative game.
 
-\begin{defn}
+\begin{definition}
     The pair $(N, v)$ is a \textit{cooperative game} if $N$ is a finite player set and $v: 2^N \rightarrow \mathbb{R}$ is a characteristic function that assigns to every coalition $S \subseteq N$ an attainable payoff $v(S)$ such that $v(\emptyset) = 0$.
     
     For every player set $N$ we denote by $\mathcal{G}^N$ the class of all characteristic functions on $N$.
-\end{defn}
+\end{definition}
 Simply put, in a cooperative game we define collective payoff values for every possible coalition between players. A coalition without any players leads to a payoff of zero.
 
 Suppose for a given cooperative game all players form a grand coalition generating a total payoff of $v(N)$. The ways in which we can distribute the collective wealth among each player can be described with a vector $x \in \mathbb{R}^N$, each element $x_i$ indicating what player $i \in N$ should receive.
 If this vector fulfills the requirement needed for efficiency and individual rationality, we have an \textit{imputation}.
 
-\begin{defn}
+\begin{definition}
     An \textit{imputation} in the cooperative game $v \in \mathcal{G}^N$ is a vector $x = (x_1, ..., x_n) \in \mathbb{R}^N$ satisfying
     \[
         \begin{aligned}
@@ -56,18 +56,18 @@ If this vector fulfills the requirement needed for efficiency and individual rat
     \begin{equation}\label{eq:imputation}
         I(N, v) \coloneqq \{x \in \mathbb{R}^N \mid x(N) = v(N),\quad x_i \geq v(i) \quad \forall i \in N\}
     \end{equation}
-\end{defn}
+\end{definition}
 
 With the imputation set, we ensure that each player at minimum receives a value they could have attained on their own.
 
 If we take each possible coalition $S \subseteq N$ into account and verify that the value from an imputation $x(S) = \sum_{i \in S}x_i \geq v(S)$, we have an imputation that is \textit{coalitionally rational}.
 
-\begin{defn}\label{def:core}
+\begin{definition}\label{def:core}
     A collection of coalitionally rational imputations is the \textit{core} of a cooperative game.
     \begin{equation}\label{eq:core}
         \mathcal{C}(N, v) \coloneqq \{x \in I(N, v) \mid x(S) \geq v(S)\quad \forall S \subseteq N\}
     \end{equation}
-\end{defn}
+\end{definition}
 
  \section{Bondareva-Shapley Theorem}
  In the following chapter we will discuss the properties of cooperative games with a nonempty core and introduce the notion of balancedness, which leads us to the Bondareva-Shapley Theorem.
@@ -77,8 +77,8 @@ If we take each possible coalition $S \subseteq N$ into account and verify that 
 
  From our definition of a core in \ref{def:core} it is easy to provide some examples of cooperative games that don't contain a core.
 
- \begin{exmp}
-    Suppose we have game with $N = 2$ with the following payoffs: $v(\emptyset) = 0, v(1) = v(2) = 2, v(1, 2) = 3$.
+ \begin{example}
+    Suppose we have game of $N = 2$ with the following payoffs: $v(\emptyset) = 0, v(1) = v(2) = 2, v(1, 2) = 3$.
 
     Determining if a core exists in such a situation may be trivial to solve, but with only two players this gives us the opportunity to plot a graph and visualize the solution concept.
     
@@ -111,28 +111,49 @@ If we take each possible coalition $S \subseteq N$ into account and verify that 
         \filldraw [draw=none,pattern=north east lines] (3.6, 3) rectangle (6.5, 5.5);
             
     \end{tikzpicture}
- \end{exmp}
+ \end{example}
 
- \begin{tikzpicture}
-    \begin{semilogxaxis}
-      [
-          enlarge x limits=false,
-          no marks,
-          grid=none,
-          xmin=1e4, xmax=22260785,
-          ymin=0, ymax=120,
-          ylabel={$\sigma_{a}$},
-          xlabel={$N$},
-          samples=400 
-       ]
-         \begin{scope}[green] 
-           \draw[orange,dashed] ({axis cs:50045,0}|-{rel axis cs:0,1}) -- ({axis cs:50045,0}|-{rel axis cs:0,0});
-           \draw[dashed,green] ({rel axis cs:1,0}|-{axis cs:0,18.385735235}) -- ({rel axis cs:0,0}|-{axis cs:0,18.385735235});
-           \filldraw [draw=red,pattern=north east lines] (rel axis cs:0,0) rectangle (axis cs:50045,18.385735235);
-         \end{scope}
-    \end{semilogxaxis}
-  \end{tikzpicture}
+%  \begin{tikzpicture}
+%     \begin{semilogxaxis}
+%       [
+%           enlarge x limits=false,
+%           no marks,
+%           grid=none,
+%           xmin=1e4, xmax=22260785,
+%           ymin=0, ymax=120,
+%           ylabel={$\sigma_{a}$},
+%           xlabel={$N$},
+%           samples=400 
+%        ]
+%          \begin{scope}[green] 
+%            \draw[orange,dashed] ({axis cs:50045,0}|-{rel axis cs:0,1}) -- ({axis cs:50045,0}|-{rel axis cs:0,0});
+%            \draw[dashed,green] ({rel axis cs:1,0}|-{axis cs:0,18.385735235}) -- ({rel axis cs:0,0}|-{axis cs:0,18.385735235});
+%            \filldraw [draw=red,pattern=north east lines] (rel axis cs:0,0) rectangle (axis cs:50045,18.385735235);
+%          \end{scope}
+%     \end{semilogxaxis}
+%   \end{tikzpicture}
  
+  As we see in the example, for a game with two players to have a nonempty core, $v(1, 2) \geq v(1) + v(2)$ must hold.
+
+  Let's further investigate what properties have to apply for a three-player game to have a nonempty core.
+
+  \begin{example}
+      We are given a cooperative game of $N = 3$ with the following payoffs:
+
+      \begin{tabular}{c | c c c c c c c}
+          $S$ & $\emptyset$ & $\{1\}$ & $\{2\}$ & $\{3\}$ & $\{1, 2\}$ & $\{1, 3\}$ & $\{2, 3\}$\\
+          \hline
+          $v(S)$ & 0 & 2 & 2 & 1 & 3 & 4 & 6
+      \end{tabular}
+
+      What would the minimum payoff $v(1, 2, 3)$ have to be for the players to form a grand coalition?
+
+      First let's consider the imputation set. For this it is only necessary to find a vector $x \in \mathbb{R}^3$ so each $x_i \geq v(i)$.
+    
+      If we just set every element of $x$ equal to the payoff of $v(i)$, we get a vector $x = (2, 2, 1)$. From this we derive that a payoff of $5$ would be sufficient for the game to have a nonempty imputation set.
+
+      Clearly this is not the answer, because players 2 and 3 would already achieve more together than all individual values summed together. So, let's find more 
+  \end{example}
 
  \subsection{Balanced Games}
 
