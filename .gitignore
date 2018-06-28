@@ -1,9 +1,2 @@
-bondareva.log
-bondareva.aux
-bondareva.bbl
-bondareva.blg
-bondareva.fdb_latexmk
-bondareva.fls
-bondareva.toc
-bondareva.synctex.gz
-bondareva.pdf
+bondareva.*
+!bondareva.tex
