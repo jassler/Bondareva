@@ -6,6 +6,7 @@
 \usepackage{amsthm}
 \usepackage{biblatex}
 \usepackage{mathtools}
+\usepackage{csquotes}
 \usepackage[bottom]{footmisc}
 \usepackage{pgfplots}
 \usepackage[hypertexnames=false]{hyperref}
@@ -27,6 +28,24 @@
 \newtheorem{definition}[thm]{Definition} % definition numbers are dependent on theorem numbers
 \newtheorem{example}[thm]{Example} % same for example numbers
 \newtheorem{corollary}[thm]{Corollary}
+
+\newcount\colveccount
+\newcommand*\colvec[1]{
+        \global\colveccount#1
+        \begin{pmatrix}
+        \colvecnext
+}
+\def\colvecnext#1{
+        #1
+        \global\advance\colveccount-1
+        \ifnum\colveccount>0
+                \\
+                \expandafter\colvecnext
+        \else
+                \end{pmatrix}
+        \fi
+}
+
 
 \begin{document}
 
@@ -121,7 +140,7 @@ This section's focus will be on some of the properties that need to apply for a 
 
 Because the grand coalition generates a value of 3, an efficient vector $x(N) = x_1 + x_2 = 3$. From this we can derive the function $f(x_2) = 3 - x_1$, which is shown in the graph by the red diagonal line.
 
-The horizontal and vertical lines could be described as the "individually rational" plots, indicating that because of $v(1) = v(2) = 2$ each player in a coalition would like to receive a payoff of 2 at minimum. This means that the smallest attained payoff that would cause the players to form a grand coalition is at the point where the two lines intersect, which is at $(2, 2)$ generating a payoff of 4. From this point, every vector to the upper right would be seen as profitable by the players.
+The horizontal and vertical lines could be described as the \enquote{individually rational} plots, indicating that because of $v(1) = v(2) = 2$ each player in a coalition would like to receive a payoff of 2 at minimum. This means that the smallest attained payoff that would cause the players to form a grand coalition is at the point where the two lines intersect, which is at $(2, 2)$ generating a payoff of 4. From this point, every vector to the upper right would be seen as profitable by the players.
 
 Because none of the actual vectors on $f(x_2)$ cross that region, the cooperative game has an empty core. For a game with two players to have a nonempty core, $v(1, 2) \geq v(1) + v(2)$ must hold, which would be at $v(1, 2) \geq v(1) + v(2) = 2 + 2 = 4$ in the example's case.
 
@@ -161,9 +180,9 @@ Let's further investigate what properties have to apply for a three-player game 
 
 However, looking for an arbitrary imputation that \textit{might} be in the core set may not always be as trivial as it was for our example, especially if such problems should be solved computationally. Furthermore finding a payoff vector should be irrelevant if we're only interested in the total attained payoff.
 
-To find a \textit{"value-based"} approach, I will make use of M. Maschler, E. Solan and S. Zamir's book "Game Theory" \cite{maschler} on page 691 ff.
+To find a \textit{\enquote{value-based}} approach, I will make use of M. Maschler, E. Solan and S. Zamir's book \enquote{Game Theory} \cite{maschler} on page 691 ff.
 
-Because the payoff vector is efficient ($x(N) = v(N)$), the inequalities from example \ref{ex:findvalue} can be transformed as followed.
+Because the payoff vector is efficient ($x(N) = v(N)$), the inequalities from example \ref{ex:findvalue} can be transformed as follows.
 
 \begin{align}
     v(1) + v(2) + v(3) &\quad\leq\quad v(1, 2, 3)\\
@@ -214,10 +233,10 @@ Each inequality in example \ref{ex:valuebased} \textit{(continued)} looks at the
     \hline
 \end{tabular}\vspace{8pt}
 
-$\mathcal{B}_1$ through $\mathcal{B}_4$ are partitions of $N = \{1, 2, 3\}$ with each player appearing exactly once. This always gives us a set of coefficients where each element is 1. From this a "partition" rule can be deducted.
+$\mathcal{B}_1$ through $\mathcal{B}_4$ are partitions of $N = \{1, 2, 3\}$ with each player appearing exactly once. This always gives us a set of coefficients where each element is 1. From this a \enquote{partition} rule can be deducted.
 
 \begin{corollary}
-    Let a cooperative game with $N$ players have a nonempty core. A partition is a collection of coalitions $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ satisfying $S_i, S_j \subsetneq N, S_i \cap S_j = \emptyset$ iff\footnote{iff is shorthand for "if and only if", also represented with the math symbol $\Leftrightarrow$} $i \neq j, S_1 \cup S_2 \cup ... \cup S_k = N$.
+    Let a cooperative game with $N$ players have a nonempty core. A partition is a collection of coalitions $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ satisfying $S_i, S_j \subsetneq N, S_i \cap S_j = \emptyset$ iff\footnote{iff is shorthand for \enquote{if and only if}, also represented with the math symbol $\Leftrightarrow$} $i \neq j, S_1 \cup S_2 \cup ... \cup S_k = N$.
 
     Then for every partition $\mathcal{B}$ it must be the case that
 
@@ -229,7 +248,7 @@ $\mathcal{B}_1$ through $\mathcal{B}_4$ are partitions of $N = \{1, 2, 3\}$ with
 The goal now is to find a property that also includes the non-partition $\mathcal{B}_5$ from our three-player example. To do this I will use Maschler's\cite{maschler} definition of Index Matrices on page 693.
 
 \begin{definition}
-    Let $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ be a collection of nonempty coalitions. The incidence matrix $\mathcal{M}$ of $\mathcal{B}$ is the incidence matrix with k rows (one for each coalition) and n columns (one for each player) with each index $x_{ij}$ at column $i = {0, ..., n}$ and row $j = {0, ..., k}$ defined as follows:
+    Let $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ be a collection of nonempty coalitions. The matrix $\mathcal{M}$ of $\mathcal{B}$ is the \textit{incidence matrix} with m rows (one for each player) and n columns (one for each coalition) with each index $x_{ij}$ at row $i = {1, ..., m}$ and column $j = {1, ..., n}$ defined as:
 
     \begin{equation*}
         x_{ij} =
@@ -240,50 +259,117 @@ The goal now is to find a property that also includes the non-partition $\mathca
     \end{equation*}
 \end{definition}
 
-To give some examples, an incidence matrices for the collections $\mathcal{B}_1 = \{\{1\}, \{2\}, \{3\}\}$, $\mathcal{B}_2 = \{\{1, 2\}, \{3\}\}$ and $\mathcal{B}_5 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ would look like this.\vspace{8pt}
+There is a slight difference to M. Maschler's\cite{maschler} definition in that the resulting matrices will be transposed (his columns represent players, not coalitions). This aligns more with Abhishek Gupta's\cite{youtube} definition (at 7:00) which later on improves some calculations visually.
 
-$
-\bordermatrix{
-\mathcal{M}_1 & 1 & 2 & 3 \cr
-S_1 & 1 & 0 & 0 \cr
-S_2 & 0 & 1 & 0 \cr
-S_3 & 0 & 0 & 1 \cr
-}
-$\hspace{50pt}$
-\bordermatrix{
-\mathcal{M}_2 & 1 & 2 & 3 \cr
-S_1 & 1 & 1 & 0 \cr
-S_2 & 0 & 0 & 1 \cr
-}
-$\hspace{50pt}$
-\bordermatrix{
-\mathcal{M}_5 & 1 & 2 & 3 \cr
-S_1 & 1 & 1 & 0 \cr
-S_2 & 1 & 0 & 1 \cr
-S_3 & 0 & 1 & 1 \cr
-}
-$\vspace{8pt}
+\begin{example}\label{ex:indexmatrix}
+    Given a cooperative game with $N = \{1, 2, 3\}$ and the collections of coalitions $\mathcal{B}_1 = \{\{1\}, \{2\}, \{3\}\}$, $\mathcal{B}_2 = \{\{1, 2\}, \{3\}\}$, $\mathcal{B}_5 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$, what is each corresponding incidence matrix?\vspace{8pt}
 
-Interestingly enough, if we take each matrix and multiply it by its corresponding set of coefficients (here shown by the greek letter $\delta$), we get the following results.
+    $
+    \bordermatrix{
+    \mathcal{M}_1 & S_1 & S_2 & S_3 \cr
+    1 & 1 & 0 & 0 \cr
+    2 & 0 & 1 & 0 \cr
+    3 & 0 & 0 & 1 \cr
+    }
+    $\hspace{35pt}$
+    \bordermatrix{
+    \mathcal{M}_2 & S_1 & S_2\cr
+    1 & 1 & 0 \cr
+    2 & 1 & 0 \cr
+    3 & 0 & 1 \cr
+    }
+    $\hspace{35pt}$
+    \bordermatrix{
+    \mathcal{M}_5 & S_1 & S_2 & S_3 \cr
+    1 & 1 & 1 & 0 \cr
+    2 & 1 & 0 & 1 \cr
+    3 & 0 & 1 & 1 \cr
+    }
+    $\vspace{8pt}
+\end{example}
+
+Interestingly, if each matrix is multiplied by its corresponding set of coefficients (here shown by the greek letter $\delta$), we get all-ones vectors.
 
 \begin{alignat*}{4}
-    \mathcal{M}_1 \delta_1 &= \begin{pmatrix}
+    \mathcal{M}_1 \delta_1 = &&\begin{pmatrix}
         1 & 0 & 0\\
         0 & 1 & 0\\
         0 & 0 & 1
-    \end{pmatrix}&&\left(1, 1, 1\right) &= (1, 1, 1)\\
+    \end{pmatrix}&\colvec{3}{1}{1}{1} &= \colvec{3}{1}{1}{1}\\
 %
-    \mathcal{M}_2 \delta_2 &= \begin{pmatrix}
-        1 & 1 & 0\\
-        0 & 0 & 1\\
-    \end{pmatrix}&&\left(1, 1\right) &= (1, 1, 1)\\
+    \mathcal{M}_2 \delta_2 = &&\begin{pmatrix}
+        1 & 0\\
+        1 & 0\\
+        0 & 1
+    \end{pmatrix}&\colvec{2}{1}{1} &= \colvec{3}{1}{1}{1}\\
 %
-    \mathcal{M}_5 \delta_5 &= \begin{pmatrix}
+    \mathcal{M}_5 \delta_5 = &&\begin{pmatrix}
         1 & 1 & 0\\
         1 & 0 & 1\\
         0 & 1 & 1
-    \end{pmatrix}&&\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right) &= (1, 1, 1)
+    \end{pmatrix}&\colvec{3}{1/2}{1/2}{1/2} &= \colvec{3}{1}{1}{1}
 \end{alignat*}
+
+If for a given collection of coalitions there exists a \textit{vector of positive coefficients} $\delta$ that after multiplying results in a all-ones vector, then the collection is called \textit{balanced}. Yakar Kannai\cite{kannai} (page 359) defines it as follows.
+
+\begin{definition}\label{def:balanced}
+    The collection of coalitions $\mathcal{B} = \{S_1,..., S_k\}$  of $N$ is called \textit{balanced} if there exists a vector of positive numbers $\delta$ such that for every $i \in N$
+
+    \begin{align}
+        \sum_{i \in S_j} \delta_j = 1 && j = 1, ..., k
+    \end{align}
+    
+    The numbers $\delta_1, ..., \delta_k$ are called \textit{balancing weights}. If $\delta$ contains at least one 0, then $\mathcal{B}$ is \textit{weakly balanced} and $\delta$ is called \textit{weakly balancing weights}.
+\end{definition}
+
+Martin Osborn\cite{osborne} (page 262) proposes an interpretation of balancing weights as \enquote{each player having one unit of time, which he must distribute among all the coalitions of which he is a member.} For $\mathcal{B}_5$ in example \ref{ex:indexmatrix} this would mean for player 1 that he spends half of his time with player 2 and the other half with player 3. Since player 2 and 3 both have half their time taken up by player 1, they will also spend their last half together.
+
+If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, the resulting values from Definition \ref{def:balanced} for each player then could be interpreted as follows.\vspace{-15pt}
+
+\begin{equation*}
+    \sum_{i \in S_j} \delta_j
+    \begin{cases}
+        = 1\qquad \text{Player i is fully occupied}\\
+        > 1\qquad \text{Player i is overworked}\\
+        < 1\qquad \text{Player i does not have enough to do}
+    \end{cases}
+\end{equation*}
+
+\begin{corollary}\label{cor:weaklybalanced}
+    $\mathcal{B} = \{S_1,..., S_k\}$ is weakly balanced (but not limited to) if a group of coalitions $\mathcal{D} = \{S \in \mathcal{B} \mid S_i \cap S_j = \emptyset \Leftrightarrow i \neq j\}$ form a partition.
+
+    The resulting weakly balancing weights $\delta_i \text{ for } i = 1, ..., k$ then are
+    
+    \begin{equation*}
+        \delta_i =
+        \begin{cases}
+            1 & \quad\text{if}\ S_k \in \mathcal{D}\\
+            0 & \quad\text{otherwise}
+        \end{cases}
+    \end{equation*}
+\end{corollary}
+
+\begin{example}
+    Given a cooperative game with $N = \{1, 2, 3, 4\}$ and a collection of coalitions $\mathcal{B} = \{\{1\}, \{1, 2\}, \{2, 3\}, \{2, 3, 4\}\}$, is $\mathcal{B}$ balanced? If so, find all balancing weights $\delta$.
+
+    The corresponding incidence matrix for $\mathcal{B}$ is $\mathcal{M} = \begin{pmatrix}
+        1 & 1 & 0 & 0\\
+        0 & 1 & 1 & 1\\
+        0 & 0 & 1 & 1\\
+        0 & 0 & 0 & 1
+    \end{pmatrix}$
+
+    Following corollary \ref{cor:weaklybalanced}, it is immediately clear that $\mathcal{B}$ is at least weakly balanced due to $S_1 = \{1\}$ and $S_4 = \{2, 3, 4\}$ forming a partition. The resulting weakly balancing vectors then are $\delta^T = (1, 0, 0, 1)$
+
+    To show if $\mathcal{B}$ is not weakly balanced, we need to solve $\delta > 0$\footnote{For a vector $x$, $x > 0$ refers to every index $x_i > 0$} for the following equations.
+
+    \begin{alignat*}{8}
+        \text{Player 1:} \quad & \delta_1 &\enskip + \enskip &\delta_2 & & & & &\enskip = 1\\
+        \text{Player 2:} \quad & & &\delta_2 &\enskip + \enskip &\delta_3 &\enskip + \enskip&\delta_4 &\enskip = 1\\
+        \text{Player 3:} \quad & & & & &\delta_3 &\enskip + \enskip&\delta_4 &\enskip = 1\\
+        \text{Player 4:} \quad & & & & & & &\delta_4 &\enskip = 1
+    \end{alignat*}
+\end{example}
 
 \subsection{The Bondareva-Shapley Theorem}
 
