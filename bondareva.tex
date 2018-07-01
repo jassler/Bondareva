@@ -9,11 +9,83 @@
 \usepackage{csquotes}
 \usepackage[bottom]{footmisc}
 \usepackage{pgfplots}
+\usepackage{listings}
 \usepackage[hypertexnames=false]{hyperref}
 %\usepackage{parskip}
 \pgfplotsset{compat=1.16}
-
 \usetikzlibrary{patterns}
+
+
+
+% Python Code style
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{8} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{8}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\footnotesize,
+otherkeywords={self},             % Add keywords here
+breaklines=true,
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false,            % 
+captionpos=b,
+numbers=left,
+numbersep=5pt
+}}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+% \definecolor{codegreen}{rgb}{0,0.6,0}
+% \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+% \definecolor{codepurple}{rgb}{0.58,0,0.82}
+% \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% \lstdefinestyle{codestyle}{
+%     %backgroundcolor=\color{backcolour},   
+%     commentstyle=\color{codegreen},
+%     keywordstyle=\color{magenta},
+%     numberstyle=\tiny\color{codegray},
+%     stringstyle=\color{codepurple},
+%     basicstyle=\footnotesize,
+%     breakatwhitespace=false,         
+%     breaklines=true,                 
+%     captionpos=b,                    
+%     keepspaces=true,                 
+%     numbers=left,                    
+%     numbersep=5pt,                  
+%     showspaces=false,                
+%     showstringspaces=false,
+%     showtabs=false,                  
+%     tabsize=2
+% }
+% \lstset{style=codestyle}
 
 \addbibresource{references.bib}
 %\bibliography{references}
@@ -27,7 +99,7 @@
 \theoremstyle{definition}
 \newtheorem{definition}[thm]{Definition} % definition numbers are dependent on theorem numbers
 \newtheorem{example}[thm]{Example} % same for example numbers
-\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{lemma}[thm]{Lemma}
 
 \newcount\colveccount
 \newcommand*\colvec[1]{
@@ -53,6 +125,7 @@
 
 \tableofcontents
 \pagebreak
+
 
 \section{Cooperative Games and the Core}
 Before diving into the concept of balanced collections, balanced games and the Bondareva-Shapley Theorem, I want to establish a basic understanding of cooperative games, imputations and the core, mainly as it is described in Robert P. Gilles book \cite{gilles}, pp. 12--13, 18--20 and 29--35.
@@ -180,7 +253,7 @@ Let's further investigate what properties have to apply for a three-player game 
 
 However, looking for an arbitrary imputation that \textit{might} be in the core set may not always be as trivial as it was for our example, especially if such problems should be solved computationally. Furthermore finding a payoff vector should be irrelevant if we're only interested in the total attained payoff.
 
-To find a \textit{\enquote{value-based}} approach, I will make use of M. Maschler, E. Solan and S. Zamir's book \enquote{Game Theory} \cite{maschler} on page 691 ff.
+To find a \textit{\enquote{value-based}} approach, I will make use of M. Maschler, E. Solan and S. Zamir's book \enquote{Game Theory} \cite{maschler} (p. 691 ff).
 
 Because the payoff vector is efficient ($x(N) = v(N)$), the inequalities from example \ref{ex:findvalue} can be transformed as follows.
 
@@ -235,26 +308,26 @@ Each inequality in example \ref{ex:valuebased} \textit{(continued)} looks at the
 
 $\mathcal{B}_1$ through $\mathcal{B}_4$ are partitions of $N = \{1, 2, 3\}$ with each player appearing exactly once. This always gives us a set of coefficients where each element is 1. From this a \enquote{partition} rule can be deducted.
 
-\begin{corollary}
-    Let a cooperative game with $N$ players have a nonempty core. A partition is a collection of coalitions $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ satisfying $S_i, S_j \subsetneq N, S_i \cap S_j = \emptyset$ iff\footnote{iff is shorthand for \enquote{if and only if}, also represented with the math symbol $\Leftrightarrow$} $i \neq j, S_1 \cup S_2 \cup ... \cup S_k = N$.
+\begin{lemma}
+    Let a cooperative game with $N$ players have a nonempty core. A partition is a collection of nonempty coalitions $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ satisfying $S_i, S_j \subsetneq N, S_i \cap S_j = \emptyset$ iff\footnote{iff is shorthand for \enquote{if and only if}, also represented with the math symbol $\Leftrightarrow$} $i \neq j, S_1 \cup S_2 \cup ... \cup S_k = N$.
 
     Then for every partition $\mathcal{B}$ it must be the case that
 
     \begin{align}
         v(N) \geq \sum_{S \in \mathcal{B}} v(S)
     \end{align}
-\end{corollary}
+\end{lemma}
 
-The goal now is to find a property that also includes the non-partition $\mathcal{B}_5$ from our three-player example. To do this I will use Maschler's\cite{maschler} definition of Index Matrices on page 693.
+The goal now is to find a property that also includes the non-partition $\mathcal{B}_5$ from our three-player example. To do this I will use Maschler's\cite{maschler} definition on Index Matrices (p. 693).
 
 \begin{definition}
-    Let $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ be a collection of nonempty coalitions. The matrix $\mathcal{M}$ of $\mathcal{B}$ is the \textit{incidence matrix} with m rows (one for each player) and n columns (one for each coalition) with each index $x_{ij}$ at row $i = {1, ..., m}$ and column $j = {1, ..., n}$ defined as:
+    Let $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ be a collection of nonempty coalitions.\footnote{Although collections are unordered, when defining $S_i$ and later on $\delta_i$ I will assume that index $i$ corresponds to the position at which this element was written. Eg. if $A = \{x, y, z\}$, $A_2$ refers to element $y$} The matrix $\mathcal{M}$ of $\mathcal{B}$ is the \textit{incidence matrix} with m rows (one for each player) and n columns (one for each coalition) with each index $x_{ij}$ at row $i = {1, ..., m}$ and column $j = {1, ..., n}$ defined as\vspace{-15pt}
 
     \begin{equation*}
         x_{ij} =
         \begin{cases}
-            1, & \text{if}\ i \in S_j\\
-            0, & \text{otherwise}
+            1 & \quad\text{if}\ i \in S_j\\
+            0 & \quad\text{otherwise}
         \end{cases}
     \end{equation*}
 \end{definition}
@@ -288,7 +361,7 @@ There is a slight difference to M. Maschler's\cite{maschler} definition in that 
     $\vspace{8pt}
 \end{example}
 
-Interestingly, if each matrix is multiplied by its corresponding set of coefficients (here shown by the greek letter $\delta$), we get all-ones vectors.
+Interestingly, if each matrix is multiplied by its corresponding set of coefficients (here shown by the greek letter $\delta$), we get all-ones vectors.\vspace{-15pt}
 
 \begin{alignat*}{4}
     \mathcal{M}_1 \delta_1 = &&\begin{pmatrix}
@@ -310,7 +383,7 @@ Interestingly, if each matrix is multiplied by its corresponding set of coeffici
     \end{pmatrix}&\colvec{3}{1/2}{1/2}{1/2} &= \colvec{3}{1}{1}{1}
 \end{alignat*}
 
-If for a given collection of coalitions there exists a \textit{vector of positive coefficients} $\delta$ that after multiplying results in a all-ones vector, then the collection is called \textit{balanced}. Yakar Kannai\cite{kannai} (page 359) defines it as follows.
+If for a given collection of coalitions there exists a \textit{vector of positive coefficients} $\delta$ that after multiplying results in a all-ones vector, then the collection is called \textit{balanced}. Yakar Kannai\cite{kannai} (p. 359) defines it as follows.
 
 \begin{definition}\label{def:balanced}
     The collection of coalitions $\mathcal{B} = \{S_1,..., S_k\}$  of $N$ is called \textit{balanced} if there exists a vector of positive numbers $\delta$ such that for every $i \in N$
@@ -322,7 +395,7 @@ If for a given collection of coalitions there exists a \textit{vector of positiv
     The numbers $\delta_1, ..., \delta_k$ are called \textit{balancing weights}. If $\delta$ contains at least one 0, then $\mathcal{B}$ is \textit{weakly balanced} and $\delta$ is called \textit{weakly balancing weights}.
 \end{definition}
 
-Martin Osborn\cite{osborne} (page 262) proposes an interpretation of balancing weights as \enquote{each player having one unit of time, which he must distribute among all the coalitions of which he is a member.} For $\mathcal{B}_5$ in example \ref{ex:indexmatrix} this would mean for player 1 that he spends half of his time with player 2 and the other half with player 3. Since player 2 and 3 both have half their time taken up by player 1, they will also spend their last half together.
+Martin Osborn\cite{osborne} (p. 262) offers an interpretation of balancing weights as \enquote{each player having one unit of time, which he\footnote{Despite the gender neutrality movement I will, for the sake of simplicity, view all players as males.} must distribute among all the coalitions of which he is a member.} For $\mathcal{B}_5$ in example \ref{ex:indexmatrix} this would mean for player 1 spending half of his time with player 2 and the other half with player 3. Since player 2 and 3 both have half their time taken up by player 1, they will also spend their last half together.
 
 If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, the resulting values from Definition \ref{def:balanced} for each player then could be interpreted as follows.\vspace{-15pt}
 
@@ -335,21 +408,23 @@ If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, t
     \end{cases}
 \end{equation*}
 
-\begin{corollary}\label{cor:weaklybalanced}
-    $\mathcal{B} = \{S_1,..., S_k\}$ is weakly balanced (but not limited to) if a group of coalitions $\mathcal{D} = \{S \in \mathcal{B} \mid S_i \cap S_j = \emptyset \Leftrightarrow i \neq j\}$ form a partition.
+\begin{lemma}\label{lem:weaklybalanced}
+    $\mathcal{B} = \{S_1,..., S_k\}$ is weakly balanced (but not limited to) if a group of coalitions $\mathcal{D} \subsetneq \mathcal{B}$ is balanced.
 
-    The resulting weakly balancing weights $\delta_i \text{ for } i = 1, ..., k$ then are
+    Let $\delta$ and $\gamma$ be the balancing vectors for $\mathcal{B}$ and $\mathcal{D}$ respectively. The resulting weakly balancing weights $\delta_i$ for $i = 1, ..., k$ then are
     
     \begin{equation*}
         \delta_i =
         \begin{cases}
-            1 & \quad\text{if}\ S_k \in \mathcal{D}\\
+            \gamma_j & \quad\text{if there is one } j = 1, ..., |\mathcal{D}| \text{ such that }\mathcal{B}_i = \mathcal{D}_j\\
             0 & \quad\text{otherwise}
         \end{cases}
     \end{equation*}
-\end{corollary}
+\end{lemma}
 
-\begin{example}
+Applied to the idea of unit of time this could be interpreted as every player spending all their available time with the balancing subsection $\mathcal{D}$ and not bothering about the rest of the coalitions.
+
+\begin{example}\label{ex:isbalanced1}
     Given a cooperative game with $N = \{1, 2, 3, 4\}$ and a collection of coalitions $\mathcal{B} = \{\{1\}, \{1, 2\}, \{2, 3\}, \{2, 3, 4\}\}$, is $\mathcal{B}$ balanced? If so, find all balancing weights $\delta$.
 
     The corresponding incidence matrix for $\mathcal{B}$ is $\mathcal{M} = \begin{pmatrix}
@@ -359,9 +434,9 @@ If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, t
         0 & 0 & 0 & 1
     \end{pmatrix}$
 
-    Following corollary \ref{cor:weaklybalanced}, it is immediately clear that $\mathcal{B}$ is at least weakly balanced due to $S_1 = \{1\}$ and $S_4 = \{2, 3, 4\}$ forming a partition. The resulting weakly balancing vectors then are $\delta^T = (1, 0, 0, 1)$
+    Following Lemma \ref{lem:weaklybalanced}, it is immediately clear that $\mathcal{B}$ is at least weakly balanced due to $S_1 = \{1\}$ and $S_4 = \{2, 3, 4\}$ forming a partition. The resulting weakly balancing coefficients then are $\delta^T = (1, 0, 0, 1)$
 
-    To show if $\mathcal{B}$ is not weakly balanced, we need to solve $\delta > 0$\footnote{For a vector $x$, $x > 0$ refers to every index $x_i > 0$} for the following equations.
+    To show if $\mathcal{B}$ is not weakly balanced, we need to solve $\delta > 0$\footnote{For a given vector $x$, $x > 0$ refers to every index $x_i > 0$} for the following equations.\vspace{-15pt}
 
     \begin{alignat*}{8}
         \text{Player 1:} \quad & \delta_1 &\enskip + \enskip &\delta_2 & & & & &\enskip = 1\\
@@ -369,7 +444,135 @@ If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, t
         \text{Player 3:} \quad & & & & &\delta_3 &\enskip + \enskip&\delta_4 &\enskip = 1\\
         \text{Player 4:} \quad & & & & & & &\delta_4 &\enskip = 1
     \end{alignat*}
+
+    Because $\delta_4 = 1$, $\delta_3$ and $\delta_2$ have to be 0 and $\mathcal{B}$ therefor is weakly balanced.\\
+
+    An interesting follow-up question is what it would take for $\mathcal{B}$ to become balanced. Removing $S_2$ and $S_3$ would be one solution, since it only leaves us with the partition.
+    
+    This however is a trivial solution and not really enlightening to our journey of understanding balanced collections. So instead, let's remove $S_1$ and $S_4$ from $\mathcal{B}$ so we get $\mathcal{B}' = \{\{1, 2\}, \{2, 3\}\}$, and try to make this subsection balanced.
+
+    Player 4 currently has nothing to do, so he can be added as a single-player coalition: $\mathcal{B}' = \{\{1, 2\}, \{2, 3\}, \{4\}\}$.\vspace{-15pt}
+
+    \begin{alignat*}{8}
+        \text{Player 1:} \quad & \delta_1' & & & & &\enskip = 1\\
+        \text{Player 2:} \quad & \delta_1' &\enskip + \enskip &\delta_2' & & &\enskip = 1\\
+        \text{Player 3:} \quad & & & \delta_2' & & & \enskip = 1\\
+        \text{Player 4:} \quad & & & &\hphantom{\enskip + \enskip} & \delta_3' & \enskip = 1
+    \end{alignat*}
+
+    This doesn't resolve for $\delta_1'$ and $\delta_2'$ so there is one more step missing.
+    
+    Player 4 does not seem to \enquote{interfere} with the other three players, thus ignoring him it is only necessary to find a coalition that makes player 1, 2 and 3 happy. Looking back at $\mathcal{B}_5 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ from example \ref{ex:indexmatrix}, I argue that the coalition $\{1, 3\}$ is enough to solve that problem.\\For $\mathcal{B}' = \{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$ we get\vspace{-15pt}
+
+    \begin{alignat*}{8}
+        \text{Player 1:} \quad & \delta_1' & \enskip + \enskip & \delta_2' & & & & & \enskip = 1\\
+        \text{Player 2:} \quad & \delta_1' & & & \enskip + \enskip & \delta_3' & & & \enskip = 1\\
+        \text{Player 3:} \quad & & & \delta_2' & \enskip + \enskip & \delta_3' & & & \enskip = 1\\
+        \text{Player 4:} \quad & & & & & & \hphantom{\enskip + \enskip} & \delta_4' & \enskip = 1
+    \end{alignat*}
+
+    And indeed, solving this equation gives us the balancing coefficients\\$\delta'^T = (\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, 1)$.\\
 \end{example}
+
+%% TODO This will be talked about later on %%
+There seems to be some recursion going on. We'll talk about this later.
+
+\begin{example}\label{ex:isbalanced2}
+    Given the two balancing collections of coalitions $\mathcal{B}_1 = \{\{1\}, \{2, 3, 4\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$ with their balancing weights $\delta_{\mathcal{B}_1}^T = (1, 1)$ and $\delta_{\mathcal{B}_2}^T = (\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, 1) $, what are the balancing coefficients for $\mathcal{B}_1 \cup \mathcal{B}_2$?\\
+
+    M. Maschler\cite{maschler} (p. 694 f.) offers an approach to this problem with infinitely many solutions. Since both collections are balanced, we only need to define a value $0 < \lambda < 1$ that represents \enquote{the time to be spent} in $\mathcal{B}_1$ and \enquote{the remaining time} $1 - \lambda$ spent in $\mathcal{B}_2$. Let $\mathcal{M}_1$ and $\mathcal{M}_2$ be the index matrices to $\mathcal{B}_1$ and $\mathcal{B}_2$ respectively, then the following equation holds true.\vspace{-10pt}
+
+    \begin{equation*}
+        \lambda \mathcal{M}_1 \delta_{\mathcal{B}_1} + (1 - \lambda) \mathcal{M}_2 \delta_{\mathcal{B}_2} = (1, 1, 1, 1)^T
+    \end{equation*}
+
+    Since the final result $\delta$ is basically $\delta_{\mathcal{B}_1}$ extended with $\delta_{\mathcal{B}_2}$. This already gives us the solution for $\mathcal{B} = \{\{1\}, \{2, 3, 4\}, \{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$.
+
+    \begin{equation*}
+        \delta_1 = \delta_2 = \lambda,\qquad\delta_3 = \delta_4 = \delta_5 = \frac{1}{2}(1 - \lambda),\qquad\delta_6 = 1 - \lambda
+    \end{equation*}
+\end{example}
+
+It seems that only the union of two balanced collections creates a new balanced collection, although with infinitely many solutions. Kannai\cite{kannai} (p. 361) at this point differentiates those unions from \textit{minimal balanced collection}.
+
+\begin{definition}
+    If a balanced collection has no proper balanced subset, it is \textit{minimal balanced}.
+\end{definition}
+
+\begin{lemma}
+    If a balanced collection is minimal, its balancing weights are unique.
+\end{lemma}
+
+\begin{example}\label{ex:twounion}
+    Given the two balanced collections $\mathcal{B}_1 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}, \{3\}\}$, what are the balancing coefficients for $\mathcal{B}_1 \cup \mathcal{B}_2$?
+
+    The big difference now is that $\mathcal{B}_1$ and $\mathcal{B}_2$ both share $\{1, 2\}$. Its balancing coefficient for $\mathcal{B}_1$ is $\frac{1}{2}$ and for $\mathcal{B}_2$ $1$. If we just assume that $\{1, 2\}$ appears twice in the union, nothing would change to our previous example and the balancing weight for one coalition could be defined as $\lambda \frac{1}{2}$ and for the other as $(1 - \lambda) * 1$.
+
+    Coming back to the interpretation of a player splitting his time, it is reasonable to assume that those two results just have to be added together. The balancing weights for $\mathcal{B} = \{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{3\}\}$ then are
+
+    \begin{equation*}
+        \delta_1 = 1 - \frac{1}{2}\lambda,\qquad \delta_2 = \delta_3 = \frac{1}{2}\lambda,\qquad \delta_4 = 1 - \lambda
+    \end{equation*}
+
+    This can be quickly verified if we set up a function for each player.
+    \begin{alignat*}{2}
+        \text{Player 1, 2:}\qquad &1 - \frac{1}{2}\lambda\enskip +\enskip \frac{1}{2}\lambda &\quad= 1\\
+        \text{Player 3:}\qquad &\frac{1}{2}\lambda\enskip  + \enskip \frac{1}{2}\lambda \enskip + \enskip 1 - \lambda &\quad= 1
+    \end{alignat*}
+\end{example}
+
+\begin{lemma}\label{lem:balancedunion}
+    Let $\mathcal{B}$ and $\mathcal{C}$ be two balanced collections with balancing vectors $\beta$ and $\gamma$. For any $0 < \lambda < 1$, the resulting balancing vector $\delta$ from joining $\mathcal{D} = \mathcal{B} \cup \mathcal{C}$ can be defined as
+
+    \begin{equation}
+        \delta_i = \begin{cases}
+            \lambda \beta_j & \quad \text{if } \mathcal{D}_i = \mathcal{B}_j \text{ and } \mathcal{D}_i \in \mathcal{B} \backslash \mathcal{C}\\
+            (1 - \lambda) \gamma_j & \quad \text{if } \mathcal{D}_i = \mathcal{C}_j \text{ and } \mathcal{D}_i \in \mathcal{C} \backslash \mathcal{B}\\
+            \lambda \beta_j + (1 - \lambda) \gamma_k & \quad \text{if } \mathcal{D}_i = \mathcal{B}_j = \mathcal{C}_k \text{ and } \mathcal{D}_i \in \mathcal{B} \cap \mathcal{C}
+        \end{cases}
+    \end{equation}
+\end{lemma}
+
+From this we can say that every balanced collection of coalitions is a union of minimal balanced collections. Guillermo Owen\cite{owen} (p. 222) proofs this through induction.
+
+Let $m$ is the number of coalitions in a balanced collection $\mathcal{D}$. If $m = 1$, the only possible collection is $\{ N \}$, which is minimal balanced. Suppose that it is true for all collections with $m = |D| - 1$ or fewer elements.
+
+If a collection $\mathcal{D}$ is minimal, then there is nothing to show. Otherwise it has a proper balanced subset $\mathcal{B}$ and, by Lemma \ref{lem:balancedunion}, another subset $\mathcal{C}$ such that $\mathcal{B} \cup \mathcal{C} = \mathcal{D}$. Since $\mathcal{B}$ and $\mathcal{C}$ are proper subsets, they each have $m = |D| - 1$ or fewer elements, and thus each can be expressed as a union of minimal balanced collections.\vspace{10pt}
+
+As a final example, let's investigate how this extends to the union of three balanced collections.
+
+\begin{example}
+    Given the three minimal balanced collections $\mathcal{B}_1 = \{\{1, 2, 3\}, \{4\}\}$, $\mathcal{B}_2 = \{\{1, 2\}, \{2, 3\}, \{3, 4\}, \{1, 4\}\}$ and $\mathcal{B}_3 = \{\{1\}, \{2\}, \{3\}, \{4\}\}$, what are the balancing coefficients for $\mathcal{B}_1 \cup \mathcal{B}_2 \cup \mathcal{B}_3$?
+
+    First let's join $\mathcal{B}_1$ and $\mathcal{B}_2$. By Lemma \ref{lem:balancedunion}, the resulting $\delta_{\mathcal{B}_1\cup\mathcal{B}_2}$ for $\mathcal{B}_1\cup\mathcal{B}_2 = \{\{1, 2, 3\}, \{4\}, \{1, 2\}, \{2, 3\}, \{3, 4\}, \{1, 4\}\}$ then is
+
+    \begin{equation*}
+        (\delta_{\mathcal{B}_1\cup\mathcal{B}_2})_{1, 2} = \lambda\qquad (\delta_{\mathcal{B}_1\cup\mathcal{B}_2})_{3, 4, 5, 6} = (1 - \lambda)\frac{1}{2}
+    \end{equation*}
+
+    If $\mathcal{B}_3$ is now added to the mix, it is only necessary to introduce a new variable $0 < \mu < 1$ and repeat the steps from before, taking under consideration though that the coalition $\{4\}$ appears twice.
+
+    For $\mathcal{B} = \{\{1, 2, 3\}, \{4\}, \{1, 2\}, \{2, 3\}, \{3, 4\}, \{1, 4\}, \{1\}, \{2\}, \{3\}\}$ we then get
+
+    \begin{equation*}
+        \delta_1 = \lambda \mu\qquad \delta_2 = \mu \lambda + (1 - \mu)\qquad \delta_{3, 4, 5, 6} = \mu(1 - \lambda)\frac{1}{2}\qquad \delta_{7, 8, 9} = 1 - \mu
+    \end{equation*}
+
+    As in example \ref{ex:twounion}, this can be verified by creating a function for each player.
+
+    \begin{alignat*}{3}
+        \text{Player 1, 2, 3:} & \qquad \lambda\mu + 2 * \mu(1-\lambda)\frac{1}{2} + 1 - \mu &\enskip=\lambda\mu + \mu - \lambda\mu + 1 - \mu &\enskip=\enskip 1\\
+        \text{Player 4:} & \quad \mu \lambda + (1 - \mu) + 2 * \mu(1-\lambda)\frac{1}{2} &\enskip= \mu\lambda + 1 - \mu + \mu - \lambda \mu &\enskip=\enskip 1
+    \end{alignat*}
+\end{example}
+
+Lastly using Python 3\footnote{\url{https://www.python.org}} I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org}} which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
+
+The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.
+
+\pythonexternal{balanced_collections.py}
+
+
 
 \subsection{The Bondareva-Shapley Theorem}
 
@@ -381,12 +584,15 @@ If $\mathcal{B}$ were unbalanced and some coefficients still had to be chosen, t
     \end{equation}
 \end{definition}
 
+
 \section{Market Games with nonempty cores}
 Market games can be proven to have a non-empty core using the Bondareva-Shapley Theorem. We will take a closer look on how this can be achieved in the third chapter.
 
-\section{Proving the Theorem using Linear Programming}
+\section{The Bondareva-Shapley Theorem and Linear Programming}
 Finally, we will show that the Bondareva-Theorem holds true with a prove using the Duality Problem in Linear Programming.
- 
+
+\subsection{Introduction to Linear Programming}
+
 \pagebreak
  
 \printbibliography
