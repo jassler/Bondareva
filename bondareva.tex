@@ -62,31 +62,6 @@ numbersep=5pt
 % Python for inline
 \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
 
-% \definecolor{codegreen}{rgb}{0,0.6,0}
-% \definecolor{codegray}{rgb}{0.5,0.5,0.5}
-% \definecolor{codepurple}{rgb}{0.58,0,0.82}
-% \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-% \lstdefinestyle{codestyle}{
-%     %backgroundcolor=\color{backcolour},   
-%     commentstyle=\color{codegreen},
-%     keywordstyle=\color{magenta},
-%     numberstyle=\tiny\color{codegray},
-%     stringstyle=\color{codepurple},
-%     basicstyle=\footnotesize,
-%     breakatwhitespace=false,         
-%     breaklines=true,                 
-%     captionpos=b,                    
-%     keepspaces=true,                 
-%     numbers=left,                    
-%     numbersep=5pt,                  
-%     showspaces=false,                
-%     showstringspaces=false,
-%     showtabs=false,                  
-%     tabsize=2
-% }
-% \lstset{style=codestyle}
-
 \addbibresource{references.bib}
 %\bibliography{references}
 
@@ -320,7 +295,7 @@ $\mathcal{B}_1$ through $\mathcal{B}_4$ are partitions of $N = \{1, 2, 3\}$ with
 
 The goal now is to find a property that also includes the non-partition $\mathcal{B}_5$ from our three-player example. To do this I will use Maschler's\cite{maschler} definition on Index Matrices (p. 693).
 
-\begin{definition}
+\begin{definition}\label{def:incidencematrix}
     Let $\mathcal{B} = \{S_1, S_2, ..., S_k\}$ be a collection of nonempty coalitions.\footnote{Although collections are unordered, when defining $S_i$ and later on $\delta_i$ I will assume that index $i$ corresponds to the position at which this element was written. Eg. if $A = \{x, y, z\}$, $A_2$ refers to element $y$} The matrix $\mathcal{M}$ of $\mathcal{B}$ is the \textit{incidence matrix} with m rows (one for each player) and n columns (one for each coalition) with each index $x_{ij}$ at row $i = {1, ..., m}$ and column $j = {1, ..., n}$ defined as\vspace{-15pt}
 
     \begin{equation*}
@@ -552,26 +527,35 @@ As a final example, let's investigate how this extends to the union of three bal
 
     If $\mathcal{B}_3$ is now added to the mix, it is only necessary to introduce a new variable $0 < \mu < 1$ and repeat the steps from before, taking under consideration though that the coalition $\{4\}$ appears twice.
 
-    For $\mathcal{B} = \{\{1, 2, 3\}, \{4\}, \{1, 2\}, \{2, 3\}, \{3, 4\}, \{1, 4\}, \{1\}, \{2\}, \{3\}\}$ we then get
+    For $\mathcal{B} = \{\{1, 2, 3\}, \{4\}, \{1, 2\}, \{2, 3\}, \{3, 4\}, \{1, 4\}, \{1\}, \{2\}, \{3\}\}$ we then get\vspace{-10pt}
 
     \begin{equation*}
         \delta_1 = \lambda \mu\qquad \delta_2 = \mu \lambda + (1 - \mu)\qquad \delta_{3, 4, 5, 6} = \mu(1 - \lambda)\frac{1}{2}\qquad \delta_{7, 8, 9} = 1 - \mu
     \end{equation*}
 
-    As in example \ref{ex:twounion}, this can be verified by creating a function for each player.
+    As in example \ref{ex:twounion}, this can be verified by creating a function for each player.\vspace{-10pt}
 
     \begin{alignat*}{3}
         \text{Player 1, 2, 3:} & \qquad \lambda\mu + 2 * \mu(1-\lambda)\frac{1}{2} + 1 - \mu &\enskip=\lambda\mu + \mu - \lambda\mu + 1 - \mu &\enskip=\enskip 1\\
         \text{Player 4:} & \quad \mu \lambda + (1 - \mu) + 2 * \mu(1-\lambda)\frac{1}{2} &\enskip= \mu\lambda + 1 - \mu + \mu - \lambda \mu &\enskip=\enskip 1
-    \end{alignat*}
+    \end{alignat*}%\vspace{0pt}
 \end{example}
 
-Lastly using Python 3\footnote{\url{https://www.python.org}} I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org}} which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
+Lastly using Python\footnote{\url{https://www.python.org/}} 3 I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org/}}, which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
 
-The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.
+The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.\\
 
-\pythonexternal{balanced_collections.py}
+\pythonexternal[caption="Find balancing weights"]{python/balanced_collections.py}
 
+The class \pythoninline{Symbol} represents a variable. It has a variable name and, after solving the equations, is assigned with a number or a function, depending on the type of solution, which we will look at later.
+
+\pythoninline{Matrix} portrays the incidence matrix (Def. \ref{def:incidencematrix}) with an added column of 1s that are on the right side of our linear equations. If we wanted to solve the equations from Example \ref{ex:isbalanced1}, we would have to supply \pythoninline{sympy} with the following.
+
+\pythonexternal[caption="Example matrix"]{python/example_matrix.py}
+
+\pythoninline{solve_linear_system} then does its best to solve the given matrix and assigns its solutions to each \pythoninline{Symbol} object.
+
+The main goal now is to transform any given collection of coalitions such that it can be evaluated by the program.
 
 
 \subsection{The Bondareva-Shapley Theorem}
@@ -584,10 +568,11 @@ The following function \pythoninline{find_balancing_weights} calculates the bala
     \end{equation}
 \end{definition}
 
-
+\pagebreak
 \section{Market Games with nonempty cores}
 Market games can be proven to have a non-empty core using the Bondareva-Shapley Theorem. We will take a closer look on how this can be achieved in the third chapter.
 
+\pagebreak
 \section{The Bondareva-Shapley Theorem and Linear Programming}
 Finally, we will show that the Bondareva-Theorem holds true with a prove using the Duality Problem in Linear Programming.
 

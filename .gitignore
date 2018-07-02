@@ -1,3 +1,4 @@
 bondareva.*
 !bondareva.tex
 __pycache__/
+.DS_STORE

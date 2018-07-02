@@ -1,4 +1,4 @@
-from sympy import Matrix, solve_linear_system, Symbol
+from sympy import Symbol, Matrix, solve_linear_system
 
 def find_balancing_weights(coalitions: list, var_name: str = 'x'):
     '''
@@ -9,8 +9,8 @@ def find_balancing_weights(coalitions: list, var_name: str = 'x'):
     players = {}
     matrices = []
     for i, coalition in enumerate(coalitions):
-        coefficients.append(Symbol('{0}{1}'.format(var_name, i+1)))
-
+        coalition_name = '{0}{{{1}}}'.format(var_name, ','.join([str(x) for x in coalition]))
+        coefficients.append(Symbol(coalition_name))
         for player in coalition:
             if player not in players:
                 players[player] = []

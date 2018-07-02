@@ -1,4 +1,7 @@
 from balanced_collections import find_balancing_weights
+from balanced_subcollections import find_balanced_subcollections
+from sympy import N
+from sympy.core.numbers import Float
 import re
 import sys
 
@@ -37,25 +40,64 @@ def prompt_coalition_input():
     return coalitions
 
 
-
 if __name__ == '__main__':
-    print('\n\n\n\n\n\n\n') 
-    print('Is your collection of coalitions balanced?')
+    print('\nIs your collection of coalitions balanced?')
     print(r'Find out by entering each coalition separately in form of "1, 2, 3", which turns it into a coalition {1, 2, 3}')
     print('(spaces are optional, numbers must be seperated by commas)\n')
     print('When you are done, leave the input empty')
 
+    # gather coalitions
     coalitions = prompt_coalition_input()
 
+    # gather results
+    result = find_balancing_weights(coalitions, var_name='\u03b4_')
 
-    result = find_balancing_weights(coalitions, '\u03b4')
+    # evaluate results
+    balanced = True
     weakly_balanced = False
+    minimal_balanced = True
+
+    # if function returns None, then the linear program doesn't have a solution
     if result is None:
-        print('There are no solutions')
+        balanced = False
+        print('There are no solutions -> it is not balanced')
     else:
+
+        # minimal balanced collections have fixed values:
+        # N(val) then should return a float, otherwise collection has infinitely many solutions and is not minimal
+        # if balancing vector contains 0, then it's weakly balanced
+        # in some cases such as {{1,2},{1,3},{2,3},{2,3,4}} there are negative solutions -> definitely not balanced
         for key, val in result.items():
-            if val == 0:
+            if type(N(val)) is not Float:
+                minimal_balanced = False
+            elif val.is_zero:
                 weakly_balanced = True
+            elif val.is_negative:
+                balanced = False
+            
             print('{0} = {1}'.format(key, val))
-    
-    print('It is {0}'.format('weakly balanced' if weakly_balanced else 'balanced'))
+        
+        # tell user what order of balancedness he reached
+        print('It is ', end='')
+        if not balanced:
+            print('not ', end='')
+        elif minimal_balanced:
+            print('minimal ', end='')
+        elif weakly_balanced:
+            print('weakly ', end='')
+        
+        print('balanced')
+
+        # in case it's not minimal balanced, try to find all subsets that are
+        if not minimal_balanced or weakly_balanced:
+            print('Trying to find all minimal balanced collections')
+            players = []
+            for coalition in coalitions:
+                for player in coalition:
+                    if player not in players:
+                        players.append(player)
+            solutions = find_balanced_subcollections(coalitions, players)
+            for solution in solutions:
+                collection = [str(x) for x in solution.keys()]
+                collection.sort()
+                print('{{{0}}}'.format(','.join(collection), end=''))
