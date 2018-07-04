@@ -50,7 +50,7 @@ $ python balanced_subcollections.py -p 3
 ```
 
 ## Find minimum payoff for a players to form a grand coalition
-Given a game (N;v) with v(S) given for all v(S) subset of N except N. It then calculates what v(N) has to be for the players to form a grand coalition.
+<div>Given a game (N;v) and all payoff functions v(S), S &#8842; N, S &ne; &empty;, you can calculate what v(N) has to be for the players to form a grand coalition.</div>
 
 Simply start `find_grand_coalition.py` and it'll guide you through.
 
