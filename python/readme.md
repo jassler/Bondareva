@@ -14,7 +14,8 @@ If `B = {{1}, {1,2}, {2,3}, {2,3,4}, {3,4}}`, call `balanced_subcollections.py` 
 ```
 $ python balanced_subcollections.py [1] [1,2] [2,3] [2,3,4] [3,4]
 {{1}, {2,3,4}} => (1, 1)
-{{3,4}, {1,2}} => (1, 1)```
+{{3,4}, {1,2}} => (1, 1)
+```
 
 With `find_min_balanced.py` you can enter your coalitions line by line and additionaly find out, if your collection is weakly balanced, minimal balanced, balanced, or not balanced.
 
@@ -34,7 +35,8 @@ Do you want to find all minimal balanced collections?
 Y/n: Y
 Trying to find all minimal balanced collections
 {{1}, {2,3,4}} => (1, 1)
-{{3,4}, {1,2}} => (1, 1)```
+{{3,4}, {1,2}} => (1, 1)
+```
 
 ## Find minimal collections for an n-player game
 ```
@@ -69,4 +71,5 @@ v(1, 3) + v(2)     = 6.0
 v(3) + v(1, 2)     = 6.0
 v(2) + v(3) + v(1) = 6.0
 v(1, 3) + v(2)     = 6.0
-v(3) + v(1, 2)     = 6.0```
+v(3) + v(1, 2)     = 6.0
+```
