@@ -482,7 +482,7 @@ It seems that only the union of two balanced collections creates a new balanced 
     If a balanced collection is minimal, its balancing weights are unique.
 \end{lemma}
 
-\begin{lemma}
+\begin{lemma}\label{lem:atmostncoalitions}
     A minimal balanced collection with $n = |N|$ players has at most $n$ coalitions.
 \end{lemma}
 
@@ -558,7 +558,7 @@ With the understanding of the minimal balanced collections and balancing coeffic
 
 \subsection{The Bondareva-Shapley Theorem}\label{sec:bondareva}
 
-\begin{thm}
+\begin{thm}\label{thm:bondareva}
     A cooperative game has a nonempty core if and only if for every balanced collection $\mathcal{B}$ of coalitions and every vector of balancing weights $\delta$ satisfies
 
     \begin{equation}
@@ -570,23 +570,94 @@ If this condition is true, the cooperative game is also said to be \textit{balan
 
 This theorem was constructed and proven independently by Bondareva\cite{bondareva} in 1963 and Shapley\cite{shapley} in 1967, although Bondareva's article was found much later in a Russian magazine.
 
-In Section \ref{sec:linearprogramming} we will investigate the connection between the Bondareva-Shapley theorem and linear programming. For now I want to investiage some examples and analyze outcomes of different scenarios.
+In Section \ref{sec:linearprogramming} we will investigate the connection between the Bondareva-Shapley theorem and linear programming. For now I want to investigate some examples and analyze outcomes of different scenarios.
 
 \begin{example}
-    Given a cooperative game $N = {1, 2, 3, 4}$ with 
+    Given a cooperative game $N = {1, 2, 3, 4}$ with the following payoffs, do the players form a grand coalition? 
+    
+    \begin{equation*}
+        v(S) = \begin{cases}
+            11 &\qquad \text{if } S = N\\
+            8 &\qquad \text{if } S = \{2, 3, 4\}\\
+            6 &\qquad \text{if } S \in \{\{1, 2\}, \{1, 3\}, \{1, 4\}\}\\
+            0 &\qquad \text{otherwise}
+        \end{cases}
+    \end{equation*}
+    
+    Trying to find all minimal balanced collections can become cumbersome. Even with a handy table on page \pageref{bonus}, for such a simple question it seems unnecessary to calculate the result of 42 equations.
+
+    Luckily we can rule out almost all balanced collections for this example, because for most collections the payoff is $0$. One way to maximize the outcome is to form a balanced collection with all coalitions $S$ where $v(S) > 0$.
+
+    Let $\mathcal{B} = \{\{1, 2\}, \{1, 3\}, \{1, 4\}, \{2, 3, 4\}\}$ with the corresponding balancing weights $\delta = \left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{2}{3}\right)$. We then calculate
+
+    \begin{equation*}
+        \frac{1}{3}\left(v(\mathcal{B}_1) + (\mathcal{B}_2) + v(\mathcal{B}_3) + 2v(\mathcal{B}_4)\right) = 11\frac{1}{3}\quad >\quad 11 = v(N)
+    \end{equation*}
+
+    Thus, by Theorem \ref{thm:bondareva}, we can conclude that no grand coalition is formed.
 \end{example}
 
-As we already saw in Example \ref{ex:valuebased} \textit{(continued)}, it is fairly quick to check for the nonemptyness of a three-player game. This becomes increasingly difficult as the number of players grow. As shown in the Bonus section on page \pageref{bonus}, a four-player game already has 42 balancing coefficients.
+Coming back to the question from Example \ref{ex:findvalue} (p. \pageref{ex:findvalue}) where we tried to find out what the generated wealth of a grand coalition had to be at least for the players to form a grand coalition, we can now generalize the solution to this problem.
+
+\begin{lemma}
+    Given a cooperative game with payoff values $v(S)$ for all $S \subsetneq N, S \neq \emptyset$, the minimum payoff in a grand coalition for the core to be not empty has to be
+
+    \begin{equation}
+        v(N) = \text{max} \left\{\sum_{S \in \mathcal{B}} \delta_S v(S)\right\}
+    \end{equation}
+\end{lemma}
+
+This way we can prove that additive games will always have a core. M. Maschler\cite{maschler} defines it as follows.
+
+\begin{definition}
+    A cooperative game is additive if for every $S \subset N \backslash \emptyset$ it holds
+
+    \begin{equation}
+        v(S) = \sum_{i \in S}v(i)
+    \end{equation}
+\end{definition}
+
+For every coalition $S$, the payoff vector $x$ is defined by $x_i = v(i)$ and is in the core of the subgame. Each subgame therefor is also balanced.\vspace{8pt}
+
+Next I want to find an approach to generate as many balanced collections as possible for a game with $n$ players. Bezalel Peleg\cite{peleg} wrote an inductive approach to this problem. Out of self interest I will only reference his papers and try to solve this problem myself.
+
+A two-player game has two balanced collections: $\mathcal{B}_1 = \{\{1\}, \{2\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}\}$.
+
+Through induction, a third player now can join the game without \enquote{obstructing} player 1 and 2. So $\mathcal{B}_1 \cup \{\{3\}\}$ and $\mathcal{B}_2 \cup \{\{3\}\}$ will work, where the added coalition ${3}$ will always have a balancing coefficient of $1$. In addition, since the collection of only the grand coalition is always balanced, $\{N\}$ can be added to the list.
+
+An important property of balanced collections is that they are symmetric. This means, if we have a collection such as $\{\{1, 2\}, \{3\}\}$, each player is freely interchangeable. We might as well replace each player with a variable $\{\{x_1, x_2\}, \{x_3\}\}$ and go through all permutations for $x = (1, 2, 3)$.
+
+So far we have $\{\{1\}, \{2\}, \{3\}\}$, $\{\{1, 2\}, \{3\}\}$, $\{\{1, 3\}, \{2\}\}$, $\{\{2, 3\}, \{1\}\}$ and  $\{\{1, 2, 3\}\}$. The final missing collection $\{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ can be generalized as follows: For a game with $n$ players, a collection with $n$ coalitions, in which for each coalition $S_i$ player $i$ is missing, is balanced. The resulting balancing coefficients then are $\delta_j = \frac{1}{n-1}$ for $j = 1, ..., n$.
+
+In math notation, this could be expressed as
+
+\begin{equation*}
+    \mathcal{B} = \bigcup_{i \in N} N \backslash \{i\}
+\end{equation*}
+
+If this is now extended to a 4-player game, we get the following collections.
+
+\begin{tabular}{ r l }
+    $\{\{1\}, \{2\}, \{3\}, \{4\}\}$\\
+    $\{\{1, 2\}, \{3\}, \{4\}\}$ & 6 permutations\\
+    $\{\{1, 2, 3\}, \{4\}\}$ & 4 permutations\\
+    $\{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$ & 4 permutations\\
+    $\{\{1, 2, 3\}, \{1, 2, 4\}, \{1, 3, 4\}, \{2, 3, 4\}\}$\\
+    $\{\{1, 2, 3, 4\}\}$
+\end{tabular}
 
 
 
 
 %% SOLUTIONS IN PYTHON %%
-\subsection{Solutions in Python}
+\section{Solutions in Python}
 
-To get a little more practical, using Python\footnote{\url{https://www.python.org/}} 3 I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org/}}, which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
+In this section I want to solve problems about balanced collections and nonempty cores in cooperative games programmatically using Python\footnote{\url{https://www.python.org/}} 3. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org/}}, which not only allows calculations on multilinear systems but is also able to represent solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
 
-The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.\footnote{Most code snippets are available on \url{https://githib.org/jassler/Bondareva}}\\
+Most code snippets together with detailed usage instructions can be found on \url{https://github.com/jassler/Bondareva/tree/master/python/}.
+
+\subsection{Finding balancing coefficients}
+The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.\\
 
 \pythonexternal[caption="Find balancing weights"]{python/balanced_collections.py}
 
@@ -594,7 +665,14 @@ The class \pythoninline{Symbol} represents a variable. It has a variable name an
 
 \pythoninline{Matrix} portrays the incidence matrix (Def. \ref{def:incidencematrix}) with an added column of 1s that were on the right side of our linear equations. If we wanted to solve the equations from Example \ref{ex:isbalanced1}, we would have to supply \pythoninline{sympy} with the following.
 
-\pythonexternal[caption="Example matrix"]{python/example_matrix.py}\label{lst:examplematrix}
+\begin{python}[caption="Example matrix",label=lst:examplematrix]
+system = Matrix([
+    [1, 1, 0, 0, 1],
+    [0, 1, 1, 1, 1],
+    [0, 0, 1, 1, 1],
+    [0, 0, 0, 1, 1]
+])
+\end{python}
 
 \pythoninline{solve_linear_system} then does its best to solve the given matrix and assigns its solutions to each \pythoninline{Symbol} object.
 
@@ -631,14 +709,17 @@ For minimal (l. 3) or weakly (l. 1) balanced collections the correct values are 
 
 Because \pythoninline{sympy} treats this as any linear system, we have to interpret the results manually check for values out of the norm.
 
-\begin{python}[caption="Evaluate result"]
+\begin{python}[caption="Evaluate result",label=lst:evaluateresult]
+from sympy import N
+from sympy.core.numbers import Float
+
 result = find_balancing_weights([[1,2],[3,4]])
 weakly_balanced = False
 minimal_balanced = True
 balanced = True
 if result is None:
     # no results (eg. for [[1,2],[2,3]])
-    balanced = false
+    balanced = False
 else:
     for val in result.values():
         # N(val) returns None if result is a function
@@ -663,13 +744,66 @@ else:
     print('Collection is balanced')
 \end{python}
 
-If this program is now run from \texttt{main.py}\footnote{\url{https://github.com/jassler/Bondareva/} in folder \texttt{python}}, it shows the following results.
+\subsection{Finding minimal balanced collections}
+In Listing \ref{lst:evaluateresult} we can see that the results from a minimal balanced collection are absolute and positive. If a collection $\mathcal{B}$ is not minimal but also not unbalanced, by Lemma \ref{lem:weaklybalanced} there has to be at least one subcollection $\mathcal{D} \subset \mathcal{B}$ such that $\mathcal{D}$ is minimal balanced.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.75]{console}
-\end{figure}
+A very straightforward way to do this is by creating a powersets. For a collection with $n$ elements we then would have to check for $2^n$ possible subcollections.
 
+Of course some can be filtered out from the very beginning. For once, collections that don't have every player participating can be removed. By Lemma \ref{lem:atmostncoalitions} coalitions of length $n > |N|$ also don't have to be taken into account. With this in mind, let's see, what this function could look like.
+
+\begin{python}[caption="Find balanced subcollections", escapechar=q]
+from balanced_collections import find_balancing_weights
+from itertools import chain, combinations
+
+def find_balanced_subcollections(collection, players):
+    # powerset generator: q\url{https://stackoverflow.com/a/18826666/7669319}q
+    def powerset_generator(collection):
+        for subset in chain.from_iterable(combinations(collection, r) for r in range(len(collection)+1)):
+            yield set(subset)
+    solutions = []
+    powerset = powerset_generator(collection)
+    players_in_collection = []
+
+    for collection in powerset:
+        # filter out collections with too many collections and
+        # that don't have all players participating
+        if len(collection) > len(players):
+            continue
+        players_in_collection.clear()
+        for coalition in collection:
+            for player in coalition:
+                if player not in players_in_collection:
+                    players_in_collection.append(player)
+
+        if len(players_in_collection) == len(players):
+            result = find_balancing_weights(collection)
+            if is_result_minimal_balanced(result):
+                solutions.append(result)
+
+    return solutions
+\end{python}
+
+Note the usage of a python generator instead of an array. If we look for every possible balanced collection in a 5-player game, we then already have $2^{(2^5 - 2)} = 1,073,741,824$ collections to go through (subtracting 2 because we can ignore the empty set and the grand coalition). Adding one player and a computer would not have enough memory to store such an array. A generator allows for elements to be created as they come and to be destroyed as they go.
+
+The function \pythoninline{is_result_minimal_balanced} called in line 25 is comparable to Listing \ref{lst:evaluateresult} (l. 5-20), except instead of setting \pythoninline{bool} values when falling into an if-statement it immediately returns \pythoninline{False}, unless it reaches the very end.
+
+Back to the Python REPL environment, we get the following results
+
+\begin{python}[escapechar=q]
+>>> find_balanced_subcollections([(1,),(1,2),(2,3),(2,3,4)],[1,2,3,4])
+[{{1}: 1, {2,3,4}: 1}]
+>>> # find all balanced collections for n players
+>>> players = [1,2,3]
+>>> coalitions = [x for length in range(len(players)+1) for x in combinations(players, length)]q\footnote{Code snippet from here: \url{https://gist.github.com/michaelkrisper/5595918}}q
+>>> coalitions.remove(())
+>>> coalitions.remove(tuple(players))
+>>> find_balanced_subcollections(coalitions, players)
+[{{1}: 1, {2,3}: 1}, {{1,3}: 1, {2}: 1}, {{3}: 1, {1,2}: 1}, {{2}: 1, {3}: 1, {1}: 1}, {{1,2}: 1/2, {1,3}: 1/2, {2,3}: 1/2}]
+\end{python}
+
+In the first example, the coalitions $\{1, 2\}$ and $\{2, 3\}$ that previously had the weakly balancing weight of 0 were removed and only the partition $\{\{1\}, \{2, 3, 4\}\}$ is left, both coalitions with a coefficient of 1.
+
+In the second example, the collection array is first generated from the amount of players we're looking for (in this case 3). After removing the \enquote{empty} set and the grand coalition (\pythoninline{tuple(players)}), \pythoninline{coalitions} has the elements \texttt{[(1,), (2,), (3,), (1,2), (1,3), (2,3)]}.
 
 \pagebreak
 \section{The Bondareva-Shapley Theorem and Linear Programming}\label{sec:linearprogramming}
@@ -677,12 +811,15 @@ Finally, we will show that the Bondareva-Theorem holds true with a prove using t
 
 \subsection{Introduction to Linear Programming}
 
+\subsection{Proof}
+
 \pagebreak
 
 \vspace{-30pt}
 
 \section*{Bonus: Minimal balanced collections for $N = 4$}\vspace{-6pt}\label{bonus}
 
+\begin{center}
 \begin{tabular}{ | r l | c | }
     \multicolumn{2}{c}{Collection of coalitions} & \multicolumn{1}{c}{Coefficients}\\
     \hline & & \\[-10pt]
@@ -730,6 +867,8 @@ Finally, we will show that the Bondareva-Theorem holds true with a prove using t
     $\mathcal{B}_{42} =$ & $\{\{1,2,3\}, \{1,2,4\}, \{1,3,4\}, \{2,3,4\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{1}{3}\right)$\\[2pt]
     \hline
 \end{tabular}
+    
+\end{center}
  
 \printbibliography
 \end{document}

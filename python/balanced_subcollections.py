@@ -95,6 +95,7 @@ if __name__ == '__main__':
         players = [i for i in range(1,int(sys.argv[2])+1)]
         collection = helpers.powerset(players)
         collection.remove(())
+        collection.remove(tuple(players))
     else:
         arg = ','.join(sys.argv[1:])
         arg = re.sub('[^\[\]\d,]', '', arg)

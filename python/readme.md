@@ -17,7 +17,7 @@ $ python balanced_subcollections.py [1] [1,2] [2,3] [2,3,4] [3,4]
 {{3,4}, {1,2}} => (1, 1)
 ```
 
-With `find_min_balanced.py` you can enter your coalitions line by line and additionaly find out, if your collection is weakly balanced, minimal balanced, balanced, or not balanced.
+With `find_min_balanced.py` you can enter your coalitions line by line and additionally find out, if your collection is weakly balanced, minimal balanced, balanced, or not balanced.
 
 ```
 Coalition #1: 1
@@ -38,7 +38,7 @@ Trying to find all minimal balanced collections
 {{3,4}, {1,2}} => (1, 1)
 ```
 
-## Find minimal collections for an n-player game
+## Find minimal balanced collections for an n-player game
 ```
 $ python balanced_subcollections.py -p 3
 {{1,2,3}} => (1)
