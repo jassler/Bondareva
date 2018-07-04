@@ -10,7 +10,12 @@
 \usepackage[bottom]{footmisc}
 \usepackage{pgfplots}
 \usepackage{listings}
+\usepackage{graphicx}
+\usepackage{chngcntr}
 \usepackage[hypertexnames=false]{hyperref}
+
+\graphicspath{ {./img/} }
+
 %\usepackage{parskip}
 \pgfplotsset{compat=1.16}
 \usetikzlibrary{patterns}
@@ -32,7 +37,7 @@
 \newcommand\pythonstyle{\lstset{
 language=Python,
 basicstyle=\footnotesize,
-otherkeywords={self},             % Add keywords here
+otherkeywords={self, None, True, False},             % Add keywords here
 breaklines=true,
 keywordstyle=\ttb\color{deepblue},
 emph={MyClass,__init__},          % Custom highlighting
@@ -93,9 +98,8 @@ numbersep=5pt
         \fi
 }
 
-
 \begin{document}
-
+\counterwithin{lstlisting}{section}
 \maketitle
 
 \tableofcontents
@@ -261,7 +265,7 @@ This can be extended to a final inequality.
     \end{align*}
 \end{example}
 
-Those five inequalities are in fact already enough to prove that a payoff of 8 would make a grand coalition feasible. The reason for this will be discussed in more detail later on.
+Those five inequalities are in fact already enough to prove that a payoff of 8 would make a grand coalition feasible. The reason for this will be discussed in chapter \ref{sec:bondareva}.
 
 
 
@@ -307,7 +311,7 @@ The goal now is to find a property that also includes the non-partition $\mathca
     \end{equation*}
 \end{definition}
 
-There is a slight difference to M. Maschler's\cite{maschler} definition in that the resulting matrices will be transposed (his columns represent players, not coalitions). This aligns more with Abhishek Gupta's\cite{youtube} definition (at 7:00) which later on improves some calculations visually.
+There is a slight difference to M. Maschler's\cite{maschler} definition in that the resulting matrices will be transposed (his columns represent players, not coalitions). This aligns more with Abhishek Gupta's\cite{youtube} definition (at 7:00) which will make later calculations a lot nicer visually.
 
 \begin{example}\label{ex:indexmatrix}
     Given a cooperative game with $N = \{1, 2, 3\}$ and the collections of coalitions $\mathcal{B}_1 = \{\{1\}, \{2\}, \{3\}\}$, $\mathcal{B}_2 = \{\{1, 2\}, \{3\}\}$, $\mathcal{B}_5 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$, what is each corresponding incidence matrix?\vspace{8pt}
@@ -455,10 +459,10 @@ There seems to be some recursion going on. We'll talk about this later.
 \begin{example}\label{ex:isbalanced2}
     Given the two balancing collections of coalitions $\mathcal{B}_1 = \{\{1\}, \{2, 3, 4\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$ with their balancing weights $\delta_{\mathcal{B}_1}^T = (1, 1)$ and $\delta_{\mathcal{B}_2}^T = (\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, 1) $, what are the balancing coefficients for $\mathcal{B}_1 \cup \mathcal{B}_2$?\\
 
-    M. Maschler\cite{maschler} (p. 694 f.) offers an approach to this problem with infinitely many solutions. Since both collections are balanced, we only need to define a value $0 < \lambda < 1$ that represents \enquote{the time to be spent} in $\mathcal{B}_1$ and \enquote{the remaining time} $1 - \lambda$ spent in $\mathcal{B}_2$. Let $\mathcal{M}_1$ and $\mathcal{M}_2$ be the index matrices to $\mathcal{B}_1$ and $\mathcal{B}_2$ respectively, then the following equation holds true.\vspace{-10pt}
+    M. Maschler\cite{maschler} (p. 694 f.) offers an approach to this problem with infinitely many solutions. Since both collections are balanced, we only need to define a value $0 < \lambda < 1$ that represents \enquote{the time to be spent} in $\mathcal{B}_1$ and \enquote{the remaining time} $1 - \lambda$ spent in $\mathcal{B}_2$. Let $\mathcal{M}_1$ and $\mathcal{M}_2$ be the index matrices to $\mathcal{B}_1$ and $\mathcal{B}_2$ respectively, then the following equation holds true.\footnote{Similar to how $\vec{0}$ represents a vector of all zeros, $\vec{1}$ in this context is a vector of all ones.}\vspace{-10pt}
 
     \begin{equation*}
-        \lambda \mathcal{M}_1 \delta_{\mathcal{B}_1} + (1 - \lambda) \mathcal{M}_2 \delta_{\mathcal{B}_2} = (1, 1, 1, 1)^T
+        \lambda \mathcal{M}_1 \delta_{\mathcal{B}_1} + (1 - \lambda) \mathcal{M}_2 \delta_{\mathcal{B}_2} = \vec{1}
     \end{equation*}
 
     Since the final result $\delta$ is basically $\delta_{\mathcal{B}_1}$ extended with $\delta_{\mathcal{B}_2}$. This already gives us the solution for $\mathcal{B} = \{\{1\}, \{2, 3, 4\}, \{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$.
@@ -474,9 +478,17 @@ It seems that only the union of two balanced collections creates a new balanced 
     If a balanced collection has no proper balanced subset, it is \textit{minimal balanced}.
 \end{definition}
 
-\begin{lemma}
+\begin{lemma}\label{lem:minimalunique}
     If a balanced collection is minimal, its balancing weights are unique.
 \end{lemma}
+
+\begin{lemma}
+    A minimal balanced collection with $n = |N|$ players has at most $n$ coalitions.
+\end{lemma}
+
+This is fairly easy to prove. Let's imagine a coalitional game with $n$ amount of players and a balanced collection with $m$ coalitions. This means we have a balancing vector $\delta$ with $m$ balancing weights. If solved through multiplication of the incidence matrix $\mathcal{M}_{n \times m}*\delta = \vec{1}$, we would get $n$ amount of linear equations to solve for $m$ unknowns.
+
+If $m > n$, then there won't be enough equations to solve for every unknown variable, thus there will always be infinitely many solution and by Lemma \ref{lem:minimalunique} it has to be made up of multiple minimal balanced collections.
 
 \begin{example}\label{ex:twounion}
     Given the two balanced collections $\mathcal{B}_1 = \{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}, \{3\}\}$, what are the balancing coefficients for $\mathcal{B}_1 \cup \mathcal{B}_2$?
@@ -510,9 +522,9 @@ It seems that only the union of two balanced collections creates a new balanced 
 
 From this we can say that every balanced collection of coalitions is a union of minimal balanced collections. Guillermo Owen\cite{owen} (p. 222) proofs this through induction.
 
-Let $m$ is the number of coalitions in a balanced collection $\mathcal{D}$. If $m = 1$, the only possible collection is $\{ N \}$, which is minimal balanced. Suppose that it is true for all collections with $m = |D| - 1$ or fewer elements.
+Let $m$ is the number of coalitions in a balanced collection $\mathcal{D}$. If $m = 1$, the only possible collection is $\{ N \}$, which is minimal balanced. Suppose that it is true for all collections with $m - 1$ or fewer elements.
 
-If a collection $\mathcal{D}$ is minimal, then there is nothing to show. Otherwise it has a proper balanced subset $\mathcal{B}$ and, by Lemma \ref{lem:balancedunion}, another subset $\mathcal{C}$ such that $\mathcal{B} \cup \mathcal{C} = \mathcal{D}$. Since $\mathcal{B}$ and $\mathcal{C}$ are proper subsets, they each have $m = |D| - 1$ or fewer elements, and thus each can be expressed as a union of minimal balanced collections.\vspace{10pt}
+If a collection $\mathcal{D}$ is minimal, then there is nothing to show. Otherwise it has a proper balanced subset $\mathcal{B}$ and, by Lemma \ref{lem:balancedunion}, another subset $\mathcal{C}$ such that $\mathcal{B} \cup \mathcal{C} = \mathcal{D}$. Since $\mathcal{B}$ and $\mathcal{C}$ are proper subsets, they each have $m - 1$ or fewer elements, and thus each can be expressed as a union of minimal balanced collections.\vspace{10pt}
 
 As a final example, let's investigate how this extends to the union of three balanced collections.
 
@@ -541,44 +553,183 @@ As a final example, let's investigate how this extends to the union of three bal
     \end{alignat*}%\vspace{0pt}
 \end{example}
 
-Lastly using Python\footnote{\url{https://www.python.org/}} 3 I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org/}}, which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
-
-The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.\\
-
-\pythonexternal[caption="Find balancing weights"]{python/balanced_collections.py}
-
-The class \pythoninline{Symbol} represents a variable. It has a variable name and, after solving the equations, is assigned with a number or a function, depending on the type of solution, which we will look at later.
-
-\pythoninline{Matrix} portrays the incidence matrix (Def. \ref{def:incidencematrix}) with an added column of 1s that are on the right side of our linear equations. If we wanted to solve the equations from Example \ref{ex:isbalanced1}, we would have to supply \pythoninline{sympy} with the following.
-
-\pythonexternal[caption="Example matrix"]{python/example_matrix.py}
-
-\pythoninline{solve_linear_system} then does its best to solve the given matrix and assigns its solutions to each \pythoninline{Symbol} object.
-
-The main goal now is to transform any given collection of coalitions such that it can be evaluated by the program.
+With the understanding of the minimal balanced collections and balancing coefficients we can now move on to the Bondareva-Shapley theorem.
 
 
-\subsection{The Bondareva-Shapley Theorem}
+\subsection{The Bondareva-Shapley Theorem}\label{sec:bondareva}
 
-\begin{definition}
+\begin{thm}
     A cooperative game has a nonempty core if and only if for every balanced collection $\mathcal{B}$ of coalitions and every vector of balancing weights $\delta$ satisfies
 
     \begin{equation}
         v(N) \geq \sum_{S \in \mathcal{B}} \delta_S v(S)
     \end{equation}
-\end{definition}
+\end{thm}
+
+If this condition is true, the cooperative game is also said to be \textit{balanced}.
+
+This theorem was constructed and proven independently by Bondareva\cite{bondareva} in 1963 and Shapley\cite{shapley} in 1967, although Bondareva's article was found much later in a Russian magazine.
+
+In Section \ref{sec:linearprogramming} we will investigate the connection between the Bondareva-Shapley theorem and linear programming. For now I want to investiage some examples and analyze outcomes of different scenarios.
+
+\begin{example}
+    Given a cooperative game $N = {1, 2, 3, 4}$ with 
+\end{example}
+
+As we already saw in Example \ref{ex:valuebased} \textit{(continued)}, it is fairly quick to check for the nonemptyness of a three-player game. This becomes increasingly difficult as the number of players grow. As shown in the Bonus section on page \pageref{bonus}, a four-player game already has 42 balancing coefficients.
+
+
+
+
+%% SOLUTIONS IN PYTHON %%
+\subsection{Solutions in Python}
+
+To get a little more practical, using Python\footnote{\url{https://www.python.org/}} 3 I want to determine programmatically if a given collection is balanced or not. To do this I will use the Python package sympy\footnote{\url{http://www.sympy.org/}}, which not only allows calculations on multilinear systems but is also able to represent the solutions in a human-readable way, for instance by showing fractions instead of decimal numbers.
+
+The following function \pythoninline{find_balancing_weights} calculates the balancing coefficients based on a collection of coalitions it is given.\footnote{Most code snippets are available on \url{https://githib.org/jassler/Bondareva}}\\
+
+\pythonexternal[caption="Find balancing weights"]{python/balanced_collections.py}
+
+The class \pythoninline{Symbol} represents a variable. It has a variable name and, after solving the equations, is assigned with a number or a function, depending on the type of solution.
+
+\pythoninline{Matrix} portrays the incidence matrix (Def. \ref{def:incidencematrix}) with an added column of 1s that were on the right side of our linear equations. If we wanted to solve the equations from Example \ref{ex:isbalanced1}, we would have to supply \pythoninline{sympy} with the following.
+
+\pythonexternal[caption="Example matrix"]{python/example_matrix.py}\label{lst:examplematrix}
+
+\pythoninline{solve_linear_system} then does its best to solve the given matrix and assigns its solutions to each \pythoninline{Symbol} object.
+
+The main goal now is to transform any given collection of coalitions such that it can be evaluated by the program. To get a better idea on how this is done, let's investigate what happens when the following collection gets passed to the function: \texttt{[[1], [1,2], [2,3], [2,3,4]]}
+
+The first loop generates a \pythoninline{Symbol} object for each coalition and adds those to the \pythoninline{coefficients} list. While doing that, the inner loop analyzes each coalition and checks for every player participating in that coalition. All players then are added to the players dictionary with a list that contains the index of each coalition they participate in. This will be important when creating the index matrix.
+
+At this stage, our \pythoninline{coefficients} and \pythoninline{players} variables look as follows.\footnote{The name \texttt{Symbol} takes up a lot of space, I replaced its constructor with the letter \texttt{S}}
+
+\begin{python}
+coefficients = [S('{1}'), S('{1,2}'), S('{2,3}'), S('{2,3,4}')]
+players = {1: [0,1], 2: [1,2,3], 3: [2,3], 4: [3]}
+\end{python}
+
+The second for-loop generates the matrix row by row for each player. The row is first initialized with an array of zeros with a length equal to the amount of coalitions we have. From there, the inner loop checks in which coalitions the corresponding player participates and sets those indexes to 1. Lastly, a 1 is added to the array for the afore mentioned reason.
+The resulting matrix looks as in Listing \ref{lst:examplematrix} and can be passed to the function \pythoninline{solve_linear_system}.
+
+Starting Python REPL and testing some input cases, we get
+
+\begin{python}[escapechar=q]
+>>> find_balancing_weights([[1],[1,2],[2,3],[2,3,4]])
+{{1}: 1, {1,2}: 0, {2,3}: 0, {2,3,4}: 1}
+>>> find_balancing_weights([[1,2],[1,3],[2,3]])
+{{1,2}: 1/2, {1,3}: 1/2, {2,3}: 1/2}
+>>> find_balancing_weights([[1,2],[3],[1,2,3]])
+{{3}: -{1,2,3} + 1, {1,2}: -{1,2,3} + 1}
+>>> find_balancing_weights([[1,2],[1,3],[2,3],[2,3,4]])
+{{1,2}: 1/2, {1,3}: 1/2, {2,3}: -1/2, {2,3,4}: 1}
+>>> find_balancing_weights([[1,2],[2,3]])
+Noneq\footnote{Note that REPL doesn't actually print \texttt{None}, I just added it for clarity}q
+\end{python}
+
+For minimal (l. 3) or weakly (l. 1) balanced collections the correct values are produced. Unbalanced collections work partly (no solution for l. 9, invalid negative solution for l. 7), and for a union of balanced solutions (l. 5), because it has infinitely many solutions, it shows how \pythoninline{\{3\}} and \pythoninline{\{1, 2\}} can be calculated in relation to \pythoninline{\{1, 2, 3\}}.
+
+Because \pythoninline{sympy} treats this as any linear system, we have to interpret the results manually check for values out of the norm.
+
+\begin{python}[caption="Evaluate result"]
+result = find_balancing_weights([[1,2],[3,4]])
+weakly_balanced = False
+minimal_balanced = True
+balanced = True
+if result is None:
+    # no results (eg. for [[1,2],[2,3]])
+    balanced = false
+else:
+    for val in result.values():
+        # N(val) returns None if result is a function
+        if type(sympy.N(val)) is not Float:
+            minimal_balanced = False
+        
+        # weakly balanced if result contains 0
+        if val.is_zero:
+            weakly_balanced = True
+        
+        # weights must not be negative
+        elif val.is_negative:
+            balanced = False
+
+if not balanced:
+    print('Collection is not balanced')
+elif weakly_balanced:
+    print('Collection is weakly balanced')
+elif minimal_balanced:
+    print('Collection is minimal balanaced')
+else:
+    print('Collection is balanced')
+\end{python}
+
+If this program is now run from \texttt{main.py}\footnote{\url{https://github.com/jassler/Bondareva/} in folder \texttt{python}}, it shows the following results.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{console}
+\end{figure}
+
 
 \pagebreak
-\section{Market Games with nonempty cores}
-Market games can be proven to have a non-empty core using the Bondareva-Shapley Theorem. We will take a closer look on how this can be achieved in the third chapter.
-
-\pagebreak
-\section{The Bondareva-Shapley Theorem and Linear Programming}
+\section{The Bondareva-Shapley Theorem and Linear Programming}\label{sec:linearprogramming}
 Finally, we will show that the Bondareva-Theorem holds true with a prove using the Duality Problem in Linear Programming.
 
 \subsection{Introduction to Linear Programming}
 
 \pagebreak
+
+\vspace{-30pt}
+
+\section*{Bonus: Minimal balanced collections for $N = 4$}\vspace{-6pt}\label{bonus}
+
+\begin{tabular}{ | r l | c | }
+    \multicolumn{2}{c}{Collection of coalitions} & \multicolumn{1}{c}{Coefficients}\\
+    \hline & & \\[-10pt]
+    $\mathcal{B}_{1} =$ & $\{\{1,2,3,4\}\}$ & $\left(1\right)$\\[2pt]
+    $\mathcal{B}_{2} =$ & $\{\{2,3,4\}, \{1\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{3} =$ & $\{\{1,3,4\}, \{2\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{4} =$ & $\{\{1,2,4\}, \{3\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{5} =$ & $\{\{1,2,3\}, \{4\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{6} =$ & $\{\{3,4\}, \{1,2\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{7} =$ & $\{\{2,4\}, \{1,3\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{8} =$ & $\{\{2,3\}, \{1,4\}\}$ & $\left(1, 1\right)$\\[2pt]
+    $\mathcal{B}_{9} =$ & $\{\{3,4\}, \{2\}, \{1\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{10} =$ & $\{\{2,4\}, \{3\}, \{1\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{11} =$ & $\{\{2,3\}, \{4\}, \{1\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{12} =$ & $\{\{1,4\}, \{3\}, \{2\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{13} =$ & $\{\{1,3\}, \{4\}, \{2\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{14} =$ & $\{\{1,2\}, \{4\}, \{3\}\}$ & $\left(1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{15} =$ & $\{\{2,3,4\}, \{1,3,4\}, \{1,2\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{16} =$ & $\{\{2,3,4\}, \{1,2,4\}, \{1,3\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{17} =$ & $\{\{2,3,4\}, \{1,2,3\}, \{1,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{18} =$ & $\{\{1,3,4\}, \{1,2,4\}, \{2,3\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{19} =$ & $\{\{1,3,4\}, \{1,2,3\}, \{2,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{20} =$ & $\{\{1,2,4\}, \{1,2,3\}, \{3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{21} =$ & $\{\{1\}, \{2\}, \{3\}, \{4\}\}$ & $\left(1, 1, 1, 1\right)$\\[2pt]
+    $\mathcal{B}_{22} =$ & $\{\{1\}, \{2,3\}, \{2,4\}, \{3,4\}\}$ & $\left(1, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{23} =$ & $\{\{1\}, \{2,3\}, \{2,4\}, \{1,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{24} =$ & $\{\{1\}, \{2,3\}, \{3,4\}, \{1,2,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{25} =$ & $\{\{1\}, \{2,4\}, \{3,4\}, \{1,2,3\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{26} =$ & $\{\{2\}, \{1,3\}, \{1,4\}, \{3,4\}\}$ & $\left(1, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{27} =$ & $\{\{2\}, \{1,3\}, \{1,4\}, \{2,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{28} =$ & $\{\{2\}, \{1,3\}, \{3,4\}, \{1,2,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{29} =$ & $\{\{2\}, \{1,4\}, \{3,4\}, \{1,2,3\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{30} =$ & $\{\{3\}, \{1,2\}, \{1,4\}, \{2,4\}\}$ & $\left(1, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{31} =$ & $\{\{3\}, \{1,2\}, \{1,4\}, \{2,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{32} =$ & $\{\{3\}, \{1,2\}, \{2,4\}, \{1,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{33} =$ & $\{\{3\}, \{1,4\}, \{2,4\}, \{1,2,3\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{34} =$ & $\{\{4\}, \{1,2\}, \{1,3\}, \{2,3\}\}$ & $\left(1, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{35} =$ & $\{\{4\}, \{1,2\}, \{1,3\}, \{2,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{36} =$ & $\{\{4\}, \{1,2\}, \{2,3\}, \{1,3,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{37} =$ & $\{\{4\}, \{1,3\}, \{2,3\}, \{1,2,4\}\}$ & $\left(\frac{1}{2}, \frac{1}{2}, \frac{1}{2}, \frac{1}{2}\right)$\\[2pt]
+    $\mathcal{B}_{38} =$ & $\{\{1,2\}, \{1,3\}, \{1,4\}, \{2,3,4\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{2}{3}\right)$\\[2pt]
+    $\mathcal{B}_{39} =$ & $\{\{1,2\}, \{2,3\}, \{2,4\}, \{1,3,4\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{2}{3}\right)$\\[2pt]
+    $\mathcal{B}_{40} =$ & $\{\{1,3\}, \{2,3\}, \{3,4\}, \{1,2,4\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{2}{3}\right)$\\[2pt]
+    $\mathcal{B}_{41} =$ & $\{\{1,4\}, \{2,4\}, \{3,4\}, \{1,2,3\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{2}{3}\right)$\\[2pt]
+    $\mathcal{B}_{42} =$ & $\{\{1,2,3\}, \{1,2,4\}, \{1,3,4\}, \{2,3,4\}\}$ & $\left(\frac{1}{3}, \frac{1}{3}, \frac{1}{3}, \frac{1}{3}\right)$\\[2pt]
+    \hline
+\end{tabular}
  
 \printbibliography
 \end{document}

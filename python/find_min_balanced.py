@@ -33,7 +33,7 @@ def prompt_coalition_input():
         
         # add coalition to collection of coalitions
         if coalition not in coalitions:
-            coalitions.append(coalition)
+            coalitions.append(tuple(coalition))
         else:
             print('Coalition is already in your list: {0}'.format(coalition))
     
@@ -42,7 +42,7 @@ def prompt_coalition_input():
 
 if __name__ == '__main__':
     print('\nIs your collection of coalitions balanced?')
-    print(r'Find out by entering each coalition separately in form of "1, 2, 3", which turns it into a coalition {1, 2, 3}')
+    print('Find out by entering each coalition separately in form of "1, 2, 3", which turns it into a coalition {1, 2, 3}')
     print('(spaces are optional, numbers must be seperated by commas)\n')
     print('When you are done, leave the input empty')
 
@@ -70,13 +70,13 @@ if __name__ == '__main__':
         for key, val in result.items():
             if type(N(val)) is not Float:
                 minimal_balanced = False
-            elif val.is_zero:
+            if val.is_zero:
                 weakly_balanced = True
             elif val.is_negative:
                 balanced = False
             
             print('{0} = {1}'.format(key, val))
-        
+
         # tell user what order of balancedness he reached
         print('It is ', end='')
         if not balanced:
@@ -85,19 +85,24 @@ if __name__ == '__main__':
             print('minimal ', end='')
         elif weakly_balanced:
             print('weakly ', end='')
-        
+
         print('balanced')
 
         # in case it's not minimal balanced, try to find all subsets that are
         if not minimal_balanced or weakly_balanced:
-            print('Trying to find all minimal balanced collections')
-            players = []
-            for coalition in coalitions:
-                for player in coalition:
-                    if player not in players:
-                        players.append(player)
-            solutions = find_balanced_subcollections(coalitions, players)
-            for solution in solutions:
-                collection = [str(x) for x in solution.keys()]
-                collection.sort()
-                print('{{{0}}}'.format(','.join(collection), end=''))
+            print('Do you want to find all minimal balanced collections?')
+            if len(coalitions) >= 10:
+                print('Note that with {} coalitions, this program has to process {} possible outcomes'.format(len(coalitions), 2 ** coalitions))
+
+            if input('Y/n: ').lower() == 'y':
+                print('Trying to find all minimal balanced collections')
+                players = []
+                for coalition in coalitions:
+                    for player in coalition:
+                        if player not in players:
+                            players.append(player)
+                solutions = find_balanced_subcollections(coalitions)
+                for solution in solutions:
+                    keys = [str(x) for x in solution.keys()]
+                    values = [str(x) for x in solution.values()]
+                    print('{{{}}} => ({})'.format(', '.join(keys), ', '.join(values)))
