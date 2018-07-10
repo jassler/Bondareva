@@ -11,8 +11,6 @@ def find_minval_for_grand_coalition(game: dict, players):
 
     For every missing coalition S in game, it assumes that v(S) = 0
     '''
-
-    collections = helpers.powerset_generator(game.keys())
     min_payoff = 0
 
     # list of collections that result in the min_payoff
@@ -22,7 +20,11 @@ def find_minval_for_grand_coalition(game: dict, players):
         if coalition not in game.keys():
             game[coalition] = 0
 
+    collections = helpers.powerset_generator(game.keys())
     for collection in collections:
+        if () in collection or tuple(players) in collection:
+            continue
+        print(collection)
         minimal, result = is_minimal_balanced(collection, players)
         if not minimal:
             continue
@@ -57,11 +59,14 @@ if __name__ == '__main__':
         while True:
             prompt = 'v({}) = '.format(', '.join([str(x) for x in coalition]))
             try:
-                game[coalition] = float(input(prompt).replace(',', '.'))
+                value = float(input(prompt).replace(',', '.'))
+                if value != 0:
+                    game[coalition] = value
                 break
             except ValueError:
                 continue
-    
+    print(game)
+    print(players)
     if len(players) >= 4:
         print('Evaluating... (this might take some time...)')
     min_payoff, results = find_minval_for_grand_coalition(game, players)

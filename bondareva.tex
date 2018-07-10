@@ -5,14 +5,66 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{biblatex}
+\usepackage{color}
+\usepackage[table, svgnames]{xcolor} % Required to specify font color
 \usepackage{mathtools}
 \usepackage{csquotes}
 \usepackage[bottom]{footmisc}
 \usepackage{pgfplots}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{lmodern}
 \usepackage{chngcntr}
 \usepackage[hypertexnames=false]{hyperref}
+
+
+%%%%%%% TITLE %%%%%%%
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\newcommand*{\plogo}{\includegraphics{logo_s}}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\newcommand*{\rotrt}[1]{\rotatebox{90}{#1}} % Command to rotate right 90 degrees
+\newcommand*{\rotlft}[1]{\rotatebox{-90}{#1}} % Command to rotate left 90 degrees
+
+\newcommand*{\titleBC}{\begingroup % Create the command for including the title page in the document
+    \centering % Center all text
+
+    \def\CP{{\fontsize{30}{48} \selectfont The Bondareva-Shapley Theorem}} % Title
+
+    %\settowidth{\unitlength}{\CP} % Set the width of the curly brackets to the width of the title
+    \settowidth{\unitlength}{\fontsize{30}{48} \selectfont The Bondareva-Shapley}
+    {\color{Brown}\resizebox*{\unitlength}{\baselineskip}{\rotrt{$\}$}}} \\[\baselineskip] % Print top curly bracket
+    \textcolor{Sienna}{\CP} \\[\baselineskip] % Print title
+    {\color{Sienna}\Large Softwarepraktikumsbericht SS18} \\ % Tagline or further description
+    {\color{Brown}\resizebox*{\unitlength}{\baselineskip}{\rotlft{$\}$}}} % Print bottom curly bracket
+
+    \vfill % Whitespace between the title and the author name
+
+    {\large 325693}\\[4pt]
+    {\Large\textbf{Felix Fritz}}\\[9pt]\vfill
+
+    \vfill % Whitespace between the author name and the publisher logo
+    \plogo\\[0.5\baselineskip] % Publisher logo
+
+    \vfill
+    \begin{tabular}{llp{1cm}ll}
+        \hspace{-20pt}Place and Date: & Kempten, \today & &
+        Signature: & \rule{4cm}{1pt} \\
+    \end{tabular}
+
+    
+
+\endgroup}
+
+%%%%%% TITLE END %%%%%%%%
+
 
 \graphicspath{ {./img/} }
 
@@ -28,7 +80,6 @@
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{8}  % for normal
 
 % Custom colors
-\usepackage{color}
 \definecolor{deepblue}{rgb}{0,0,0.5}
 \definecolor{deepred}{rgb}{0.6,0,0}
 \definecolor{deepgreen}{rgb}{0,0.5,0}
@@ -100,8 +151,12 @@ numbersep=5pt
 
 \begin{document}
 \counterwithin{lstlisting}{section}
-\maketitle
 
+\pagestyle{empty}
+\titleBC
+\pagebreak
+
+\pagestyle{plain}
 \tableofcontents
 \pagebreak
 
@@ -162,7 +217,7 @@ This section's focus will be on some of the properties that need to apply for a 
 
     Determining if a core exists in such a situation may be trivial to solve, but with only two players this gives us the opportunity to plot a graph and visualize the solution concept.
     
-    Because this is only a two-player game, there are no coalitions other than the grand coalition. This means that every imputation is automatically inside the core.
+    A two-player game has no coalition other than the grand coalition. This means that every imputation is automatically inside the core.
     
     \begin{tikzpicture}
         
@@ -192,7 +247,7 @@ This section's focus will be on some of the properties that need to apply for a 
 
 Because the grand coalition generates a value of 3, an efficient vector $x(N) = x_1 + x_2 = 3$. From this we can derive the function $f(x_2) = 3 - x_1$, which is shown in the graph by the red diagonal line.
 
-The horizontal and vertical lines could be described as the \enquote{individually rational} plots, indicating that because of $v(1) = v(2) = 2$ each player in a coalition would like to receive a payoff of 2 at minimum. This means that the smallest attained payoff that would cause the players to form a grand coalition is at the point where the two lines intersect, which is at $(2, 2)$ generating a payoff of 4. From this point, every vector to the upper right would be seen as profitable by the players.
+The horizontal and vertical lines could be described as the \enquote{individually rational} plots, indicating that due to $v(1) = v(2) = 2$ each player in a coalition would like to receive a payoff of 2 at minimum. This means that the smallest attained payoff that would cause the players to form a grand coalition is at the point at which the two lines intersect, in our case at $(2, 2)$ generating a payoff of 4. From this point, every vector to the upper right would be seen as profitable by the players.
 
 Because none of the actual vectors on $f(x_2)$ cross that region, the cooperative game has an empty core. For a game with two players to have a nonempty core, $v(1, 2) \geq v(1) + v(2)$ must hold, which would be at $v(1, 2) \geq v(1) + v(2) = 2 + 2 = 4$ in the example's case.
 
@@ -619,34 +674,25 @@ This way we can prove that additive games will always have a core. M. Maschler\c
 
 For every coalition $S$, the payoff vector $x$ is defined by $x_i = v(i)$ and is in the core of the subgame. Each subgame therefor is also balanced.\vspace{8pt}
 
-Next I want to find an approach to generate as many balanced collections as possible for a game with $n$ players. Bezalel Peleg\cite{peleg} wrote an inductive approach to this problem. Out of self interest I will only reference his papers and try to solve this problem myself.
+Next I want to find some properties that can be found in balanced collections and might make finding all potential balanced collections easier. Bezalel Peleg\cite{peleg} wrote an inductive approach to this problem. Out of self interest I will only reference his papers and try to continue on my own.
 
-A two-player game has two balanced collections: $\mathcal{B}_1 = \{\{1\}, \{2\}\}$ and $\mathcal{B}_2 = \{\{1, 2\}\}$.
+Symmetry plays an important role in generating balanced collections. If we for instance have a collection such as $\{\{1, 2\}, \{3\}\}$, each player is freely interchangeable. We might as well replace each player with a variable $\{\{x_1, x_2\}, \{x_3\}\}$ and go through all permutations for $x = (1, 2, 3)$. Using a binomial coefficient the number of ways the first coalition $\{x_1, x_2\}$ can be filled with is $\frac{3!}{2!(3-2)!} = 3$. Since the last coalition $\{x_3\}$ is dependend on who participates in the first coalition, there are no more combinations left.\vspace{8pt}
 
-Through induction, a third player now can join the game without \enquote{obstructing} player 1 and 2. So $\mathcal{B}_1 \cup \{\{3\}\}$ and $\mathcal{B}_2 \cup \{\{3\}\}$ will work, where the added coalition ${3}$ will always have a balancing coefficient of $1$. In addition, since the collection of only the grand coalition is always balanced, $\{N\}$ can be added to the list.
+Following the notion of symmetry, when looking at partitions of a player set, an interesting aspect then is the size or number of players in each coalition. A four-player game for instance can be made up of a 2+2, 1+3, 1+1+2 or 1+1+1+1 partition. Calculating the number of symmetric collections for each partition then becomes a little more tricky - our binomial function will still work for coalitions containing 1-player coalitions with a single multi-player coalition, such as 1+3 with 4 permutations and 1+1+2 with 6 permutations. Since 2+2 is symmetric in itself again (eg. there is no difference in $\{\{1, 2\}, \{3, 4\}\}$ and $\{\{3, 4\}, \{1, 2\}\}$), the result of $\frac{4!}{2!(4-2)!} = 6$ has to be divided in half again, so it becomes $3$.
 
-An important property of balanced collections is that they are symmetric. This means, if we have a collection such as $\{\{1, 2\}, \{3\}\}$, each player is freely interchangeable. We might as well replace each player with a variable $\{\{x_1, x_2\}, \{x_3\}\}$ and go through all permutations for $x = (1, 2, 3)$.
+The same is true for a 6-player game with a 3+3 partition, which has 10 combinations. For each other partition a binomial coefficient leads to the correct solutions (eg. 2+2+2 and 4+2 has 15 combinations).\vspace{8pt}
 
-So far we have $\{\{1\}, \{2\}, \{3\}\}$, $\{\{1, 2\}, \{3\}\}$, $\{\{1, 3\}, \{2\}\}$, $\{\{2, 3\}, \{1\}\}$ and  $\{\{1, 2, 3\}\}$. The final missing collection $\{\{1, 2\}, \{1, 3\}, \{2, 3\}\}$ can be generalized as follows: For a game with $n$ players, a collection with $n$ coalitions, in which for each coalition $S_i$ player $i$ is missing, is balanced. The resulting balancing coefficients then are $\delta_j = \frac{1}{n-1}$ for $j = 1, ..., n$.
+Next, let's suppose we have all six balanced collections of a three-player game (including the grand coalition). If a fourth player joins, through induction all six collections can remain with player 4 acting as a single coalition with a balancing coefficient of 1. And, through symmetry, player 4 can be swapped out by three other players, which means that we get a total of $6*4 = 24$ combinations.
 
-In math notation, this could be expressed as
+More generally, if an $n$-player game has m balanced collections of coalitions and a player $n+1$ joins the game, $m*(n+1)$ balanced collections can be determined immediately.\vspace{8pt}
+
+Finally, for any $n$-player game we can generalize the following: For a game with $n$ players, a collection with $n$ coalitions, in which for each coalition $S_i$ player $i$ is missing, is balanced. The resulting balancing coefficients then are $\delta_j = \frac{1}{n-1}$ for $j = 1, ..., n$.
+
+In math notation, this could be expressed as 
 
 \begin{equation*}
     \mathcal{B} = \bigcup_{i \in N} N \backslash \{i\}
-\end{equation*}
-
-If this is now extended to a 4-player game, we get the following collections.
-
-\begin{tabular}{ r l }
-    $\{\{1\}, \{2\}, \{3\}, \{4\}\}$\\
-    $\{\{1, 2\}, \{3\}, \{4\}\}$ & 6 permutations\\
-    $\{\{1, 2, 3\}, \{4\}\}$ & 4 permutations\\
-    $\{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4\}\}$ & 4 permutations\\
-    $\{\{1, 2, 3\}, \{1, 2, 4\}, \{1, 3, 4\}, \{2, 3, 4\}\}$\\
-    $\{\{1, 2, 3, 4\}\}$
-\end{tabular}
-
-
+\end{equation*}\vspace{30pt}
 
 
 %% SOLUTIONS IN PYTHON %%
@@ -678,17 +724,17 @@ system = Matrix([
 
 The main goal now is to transform any given collection of coalitions such that it can be evaluated by the program. To get a better idea on how this is done, let's investigate what happens when the following collection gets passed to the function: \texttt{[[1], [1,2], [2,3], [2,3,4]]}
 
-The first loop generates a \pythoninline{Symbol} object for each coalition and adds those to the \pythoninline{coefficients} list. While doing that, the inner loop analyzes each coalition and checks for every player participating in that coalition. All players then are added to the players dictionary with a list that contains the index of each coalition they participate in. This will be important when creating the index matrix.
+The first loop generates a \pythoninline{Symbol} object for each coalition and adds those to the \pythoninline{coefficients} list. While doing that, the inner loop analyzes each coalition and checks for every player participating in that coalition. All players then are added to the players dictionary with a list that contains the index of each coalition they participate in. This will be important when creating the index matrix.\vspace{8pt}
 
 At this stage, our \pythoninline{coefficients} and \pythoninline{players} variables look as follows.\footnote{The name \texttt{Symbol} takes up a lot of space, I replaced its constructor with the letter \texttt{S}}
 
 \begin{python}
 coefficients = [S('{1}'), S('{1,2}'), S('{2,3}'), S('{2,3,4}')]
 players = {1: [0,1], 2: [1,2,3], 3: [2,3], 4: [3]}
-\end{python}
+\end{python}\vspace{8pt}
 
 The second for-loop generates the matrix row by row for each player. The row is first initialized with an array of zeros with a length equal to the amount of coalitions we have. From there, the inner loop checks in which coalitions the corresponding player participates and sets those indexes to 1. Lastly, a 1 is added to the array for the afore mentioned reason.
-The resulting matrix looks as in Listing \ref{lst:examplematrix} and can be passed to the function \pythoninline{solve_linear_system}.
+The resulting matrix looks as in Listing \ref{lst:examplematrix} and can be passed to the function \pythoninline{solve_linear_system}.\vspace{8pt}
 
 Starting Python REPL and testing some input cases, we get
 
@@ -703,9 +749,9 @@ Starting Python REPL and testing some input cases, we get
 {{1,2}: 1/2, {1,3}: 1/2, {2,3}: -1/2, {2,3,4}: 1}
 >>> find_balancing_weights([[1,2],[2,3]])
 Noneq\footnote{Note that REPL doesn't actually print \texttt{None}, I just added it for clarity}q
-\end{python}
+\end{python}\vspace{8pt}
 
-For minimal (l. 3) or weakly (l. 1) balanced collections the correct values are produced. Unbalanced collections work partly (no solution for l. 9, invalid negative solution for l. 7), and for a union of balanced solutions (l. 5), because it has infinitely many solutions, it shows how \pythoninline{\{3\}} and \pythoninline{\{1, 2\}} can be calculated in relation to \pythoninline{\{1, 2, 3\}}.
+For minimal (l. 3) or weakly (l. 1) balanced collections the correct values are produced. Unbalanced collections work partly (no solution for l. 9, invalid negative solution for l. 7), and for a union of balanced solutions (l. 5), because it has infinitely many solutions, it shows how \pythoninline{\{3\}} and \pythoninline{\{1, 2\}} can be calculated in relation to \pythoninline{\{1, 2, 3\}}.\vspace{8pt}
 
 Because \pythoninline{sympy} treats this as any linear system, we have to interpret the results manually check for values out of the norm.
 
@@ -742,7 +788,7 @@ elif minimal_balanced:
     print('Collection is minimal balanaced')
 else:
     print('Collection is balanced')
-\end{python}
+\end{python}\vspace{40pt}
 
 \subsection{Finding minimal balanced collections}
 In Listing \ref{lst:evaluateresult} we can see that the results from a minimal balanced collection are absolute and positive. If a collection $\mathcal{B}$ is not minimal but also not unbalanced, by Lemma \ref{lem:weaklybalanced} there has to be at least one subcollection $\mathcal{D} \subset \mathcal{B}$ such that $\mathcal{D}$ is minimal balanced.
@@ -803,15 +849,198 @@ Back to the Python REPL environment, we get the following results
 
 In the first example, the coalitions $\{1, 2\}$ and $\{2, 3\}$ that previously had the weakly balancing weight of 0 were removed and only the partition $\{\{1\}, \{2, 3, 4\}\}$ is left, both coalitions with a coefficient of 1.
 
-In the second example, the collection array is first generated from the amount of players we're looking for (in this case 3). After removing the \enquote{empty} set and the grand coalition (\pythoninline{tuple(players)}), \pythoninline{coalitions} has the elements \texttt{[(1,), (2,), (3,), (1,2), (1,3), (2,3)]}.
+In line 8, the collection array is first generated from the amount of players we're looking for (in this case 3). After removing the \enquote{empty} set and the grand coalition (\pythoninline{tuple(players)}), \pythoninline{coalitions} has the elements \texttt{[(1,), (2,), (3,), (1,2), (1,3), (2,3)]}. The function then returns an array of length 5, each index containing all participating coalitions with their corresponding balancing weights.
+
+\pagebreak
+\subsection{Finding smallest payoff for nonempty core}
+After finding all balanced collections of an n-player game with their corresponding set of balancing vectors, we can come back to the question from example \ref{ex:findvalue} and calculate, what the minimum payoff of the grand coalition has to be in order for the core to be nonempty. This becomes trivial to solve, since we only have to keep track of the ongoing maximum value from each balanced collection.
+
+\begin{python}
+def find_minval_for_grand_coalition(game: dict, players):
+    for coalition in helpers.powerset_generator(players):
+        if coalition not in game.keys():
+            game[coalition] = 0
+    
+    collections = helpers.powerset_generator(game.keys())
+    min_payoff = 0
+
+    for collection in collections:
+        minimal, result = is_minimal_balanced(collection, players)
+        if not minimal:
+            continue
+        
+        sum = 0
+
+        for key, val in result.items():
+            keyarr = str(key).replace('{', '').replace('}', '').split(',')
+            coalitions = tuple([int(x) for x in keyarr)
+            sum += (N(val) * game[coalitions])
+        
+        if sum > min_payoff:
+            min_payoff = sum
+
+    return min_payoff
+\end{python}
+
+I again make use of a generator, here (l. 2 and l. 6) called in an external \pythoninline{helpers}-file, to make sure all coalitions appear in the game. If not existent, the program assumes its payoff is 0.
+
+The variable \pythoninline{min_payoff} is the one keeping track of the maximum value from each collection. Once every minimal balanced collection $\mathcal{B}$ is filtered out (l. 11), $\sum_{S \in \mathcal{B}}\delta_S v(S)$ is calculated in the inner for loop (l. 16).\vspace{8pt}
+
+This function now can be tested and used as follows.
+
+\begin{python}
+>>> players = [1,2,3]
+>>> game = {(1,): 1, (2,): 2, (3,): 5}
+>>> find_minval_for_grand_coalition(game, players)
+8.00000000000000
+>>> game[(1,2)] = 4
+>>> find_minval_for_grand_coalition(game, players)
+9.00000000000000
+>>> game[(1,3)] = 7
+>>> find_minval_for_grand_coalition(game, players)
+9.00000000000000
+>>> game[(2,3)] = 8
+>>> find_minval_for_grand_coalition(game, players)
+9.50000000000000
+\end{python}
+
 
 \pagebreak
 \section{The Bondareva-Shapley Theorem and Linear Programming}\label{sec:linearprogramming}
-Finally, we will show that the Bondareva-Theorem holds true with a prove using the Duality Problem in Linear Programming.
 
 \subsection{Introduction to Linear Programming}
+Finally, I want to touch on the topic of Linear Programming and show how the Bondareva-Shapley Theorem can be proven using the Duality Problem. To give a brief introduction to linear programming, I will use some of M. Maschler's\cite{maschler} (p. 945 f) definitions and follow up with examples to point out the relation between a linear program and its dual program, mostly as shown by Bradley, Max, and Magnanty\cite{bradley} (chapter 4).
+
+\begin{definition}\label{def:linearprogram}
+    Let $c, y \in \mathbb{R}^m, b \in \mathbb{R}^n$, and let $A$ be an $n \times m$ matrix. The linear program in the unknowns $y$ defined by $A, b, c$ is the following maximization program under linear constraints.\vspace{-12pt}
+
+    \begin{alignat*}{2}
+        \text{Compute:}\qquad& Z_P := \text{max}\left\{ cy^T \right\},\\
+        \text{subject to:}\qquad& Ay^T \leq b^T,\\
+        & y \geq \vec{0}
+    \end{alignat*}
+\end{definition}
+
+$c$ is the objective function, $A$ and $b$ represent the linear constraints. $Z_P$ is also known as a \textit{primal Program}.
+
+\begin{example}\label{ex:linearprogram}
+    Maximize $8y_1 + 10y_2 + 5y_3$ subject to\vspace{-20pt}
+
+    \begin{alignat*}{6}
+        3y_1 &\quad + \quad& 4y_2 &\quad + \quad& 2y_3 &\quad \leq \quad& 7\\
+        y_1 &\quad + \quad& y_2 &\quad + \quad& y_3 &\quad \leq \quad& 2\\
+        & y_1, & & y_2, & y_3 &\quad \geq \quad& 0
+    \end{alignat*}\vspace{-20pt}
+
+    The corresponding variables from Def. \ref{def:linearprogram} then are defined as\vspace{-10pt}
+
+    \begin{equation*}
+        A = \begin{pmatrix}
+            3 & 4 & 2\\
+            1 & 1 & 1
+        \end{pmatrix}
+        , \quad b = \colvec{2}{7}{2}, c = \colvec{3}{8}{10}{5}
+    \end{equation*}
+    
+    The most straight-forward way to tackle this problem is by turning all linear constraints into linear equations and solving those through substitution. Because we have 3 unknowns and only 2 equations, I will use $y_3$ to calculate the values of $y_1$ and $y_2$.\vspace{-20pt}
+
+    \begin{alignat*}{3}
+        y_1\enskip=\quad& 1 - 2y_3 & \qquad \Rightarrow \quad & y_3 \leq \frac{1}{2}\\
+        y_2\enskip=\quad& 1 + \hphantom{2}y_3 & \qquad \Rightarrow \quad & y_3 \geq 0
+    \end{alignat*}
+
+    Because $y_1, y_2 \geq 0$, we can assert that $y_3$ has to be between $0$ and $\frac{1}{2}$.
+    
+    If those values are now inserted into the primal maximization program $Z_P$, we get\vspace{-20pt}
+
+    \begin{align*}
+        Z_P &= \text{max} \left\{0 \leq y_3 \leq 0.5\enskip \mid \enskip 8(1 - 2y_3) + 10(1 + y_3) + 5y_3\right\}\\
+        &= \text{max} \left\{0 \leq y_3 \leq 0.5 \enskip \mid \enskip 18 - y_3\right\} = 18 - 0 = 18
+    \end{align*}
+
+    This means for $y_3 = 0, y_2 = 1, y_1 = 1$ all constraints are satisfied and the Linear Program results in the maximized value of $18$ which cannot be further improved.
+\end{example}
+
+\begin{definition}
+    Given the primal program with unknowns $y \in \mathbb{R}^m$\vspace{-20pt}
+
+    \begin{alignat*}{2}
+        \text{Compute:}\qquad& Z_P := \text{max}\left\{ cy^T \right\},\\
+        \text{subject to:}\qquad& Ay^T \leq b^T,\\
+        & y \geq \vec{0},
+    \end{alignat*}
+
+    its \textit{dual program} with unknowns $x \in \mathbb{R}^n$ is\vspace{-20pt}
+
+    \begin{alignat*}{2}
+        \text{Compute:}\qquad& Z_D := \text{min}\left\{ xb^T \right\},\\
+        \text{subject to:}\qquad& xA \geq c,\\
+        & x \geq \vec{0}
+    \end{alignat*}
+\end{definition}
+
+\begin{example}\label{ex:linearprogramming2}
+    Following example \ref{ex:linearprogram}, its corresponding dual program is\vspace{-20pt}
+
+    \begin{alignat*}{1}
+        \text{Compute:}\qquad& Z_D := \text{min}\left\{ 7x_1 + 2x_2 \right\},\\
+        \text{subject to:}\qquad& 3x_1 \enskip + \enskip x_2 \enskip \geq \enskip 8,\\
+        & 4x_1 \enskip + \enskip x_2 \enskip \geq \enskip 10,\\
+        & 2x_1 \enskip + \enskip x_2 \enskip \geq \enskip 5,\\
+        & \hspace{23pt} x_1, x_2 \enskip \geq \enskip 0
+    \end{alignat*}
+
+    Geometrically those functions can be plotted into a two-dimensional cartesian coordinate system.\footnote{Interactive graph can be viewed on: \url{https://www.geogebra.org/graphing/ydajgc6z}}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/dual_program}
+    \end{figure}
+
+    The blue area satisfying all constraint is called the \textit{feasible region}. If the objective function crosses into the feasible region, the results for the dual program become feasible.
+
+    This means changing the right side of $7x_1 + 2x_2 = 0$ such that the plot moves orthogonal towards the feasible region. Since we try to minimize the result, this will happen as soon as the objective function hits the intersection of the green and blue line at coordinate $\left(2, 2\right)$. Doing so gives us $18$ as a result.
+\end{example}
+
+It is no mere coincidence that example \ref{ex:linearprogram} and \ref{ex:linearprogramming2} have the same result. The following can be deducted.
+
+\begin{lemma}\label{lem:feasibleregion}
+    If the feasible region in the primal program $Z_P$ is bounded, the dual program $Z_D$ is bounded. Furthermore, the maximized result $Z_P$ then is equal to the minimized result $Z_D$.
+\end{lemma}
+
+I will not go further into detail on why that is and instead continue with the proof of the Bondareva-Shapley theorem. For further information on the concept of duality I refer to the fourth chapter of Bradley, Max, and Magnanty's\cite{bradley} book.
 
 \subsection{Proof}
+M. Maschler\cite{maschler} conducts this proof in steps. First, as with any linear program, the primal program and its dual program are determined. Then it is shown that the core is nonempty if and only if $Z_D \leq v(N)$. Lastly it is that $Z_P \leq v(N)$ if and only if theorem \ref{thm:bondareva} holds.
+
+Denote by $\mathcal{P}(N) := \left\{S \subseteq N, S \neq \emptyset \right\}$ of nonempty coalitions and $P$ the collection of all weights weakly balancing $\mathcal{P}(N)$.\vspace{8pt}
+
+\textit{Step 1:} The \textit{primal program} with the variables of balancing weights $\delta_S$ for\vspace{-15pt}
+
+\begin{alignat*}{2}
+    \text{Compute:}\qquad& Z_P := \text{max} \sum_{S \in \mathcal{P}(N)} \delta_S v(S) ,\\
+    \text{subject to:}\qquad& \sum_{\{S: i \in S_j\}}\delta_S = 1,\quad \forall i \in N,\\
+    & \hphantom{\sum_{\{S: i \in S_j\}}.} \delta_S \geq 0,\quad \forall S \in \mathcal{P}(N).
+\end{alignat*}
+
+The set of feasible solutions is $P$. Because $\mathcal{P}(N)$ always has one balanced collection at minimum (eg. partitions with balancing weights $\delta = \vec{1}$), $Z_P$ is bounded.\vspace{8pt}
+
+\textit{Step 2:} The \textit{dual program} minimizes the payoff vector $x(N)$ and is subject to the basic definition of a nonempty core (def. \ref{def:core}).\vspace{-15pt}
+
+\begin{alignat*}{2}
+    \text{Compute:}\qquad& Z_D := \text{min}\left\{x(N)\right\},\\
+    \text{subject to:}\qquad& x(S) \geq v(S),\quad \forall S \in \mathcal{P}(N).
+\end{alignat*}
+
+Because $Z_P$ was bounded, by Lemma \ref{lem:feasibleregion} we can say that $Z_D$ is also bounded and has a solution that is equal to $Z_P$.\vspace{8pt}
+
+\textit{Step 3:} The core is nonempty if and only if $Z_D \leq v(N)$. To prove this, we need to show the equivalency in both \enquote{directions}.\vspace{8pt}
+
+\textit{Step 3.1:} If the core is nonempty then $Z_D \leq v(N)$. For a vector $x$ in the core it satisfies $x(S) \geq v(S)$ for every $S \subseteq N$, thus conforming to the constraints of $Z_D$. Since $x(N) = v(N) \Rightarrow \text{min}\left\{x(N)\right\} = v(N)$, therefor $Z_D \leq v(N)$.\vspace{8pt}
+
+\textit{Step 3.2:} If $Z_D \leq v(N)$ then the core is empty. From our previous step it follows that $x(N) = \sum_{i \in N} x_i = Z_D \leq v(N)$. For $S = N$ the constraint is $x(N) \geq x(N)$. Because per definition $x(N) = v(N)$ we know that $x$ is in the core, thus the core is not empty.\vspace{8pt}
+
+\textit{Step 4:} $Z_P \leq v(N)$ if and only if Theorem \ref{thm:bondareva} holds. Because this is true for every balancing coalition $S \subseteq N$ with its balancing weights $\delta_S$, this is true. Therefor this theorem is proven.
 
 \pagebreak
 
